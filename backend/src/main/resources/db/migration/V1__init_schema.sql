@@ -11,10 +11,12 @@ CREATE OR REPLACE FUNCTION f_unaccent(text) RETURNS text
     LANGUAGE sql IMMUTABLE PARALLEL SAFE STRICT
 AS $$ SELECT public.unaccent('public.unaccent'::regdictionary, $1) $$;
 
--- Texte normalisé pour la recherche : minuscules, sans accents
+-- Texte normalisé pour la recherche : minuscules, sans accents.
+-- Appel qualifié par le schéma : depuis PostgreSQL 17, la création d'index exécute les
+-- fonctions avec un search_path restreint (pg_catalog), où f_unaccent serait introuvable.
 CREATE OR REPLACE FUNCTION f_normalize(text) RETURNS text
     LANGUAGE sql IMMUTABLE PARALLEL SAFE STRICT
-AS $$ SELECT lower(f_unaccent($1)) $$;
+AS $$ SELECT pg_catalog.lower(public.f_unaccent($1)) $$;
 
 -- ---------------------------------------------------------------------
 -- Utilisateurs (créés à la première requête, à partir du jeton Keycloak)
