@@ -1,0 +1,30 @@
+# Secrets locaux
+.env
+*.local.yml
+
+# Données (fichiers Ciqual, imports de test volumineux)
+data/*
+!data/.gitkeep
+
+# Java / Maven
+backend/target/
+*.class
+*.log
+hs_err_pid*
+
+# Node / Angular
+frontend/node_modules/
+frontend/dist/
+frontend/.angular/
+frontend/coverage/
+
+# IDE / OS
+.idea/
+*.iml
+.vscode/*
+!.vscode/extensions.json
+.DS_Store
+Thumbs.db
+
+# Claude Code (réglages personnels)
+.claude/settings.local.json

@@ -1,0 +1,47 @@
+spring:
+  application:
+    name: meal-planner
+  datasource:
+    url: ${DB_URL:jdbc:postgresql://localhost:5432/meal_planner}
+    username: ${DB_USER:meal_planner}
+    password: ${DB_PASSWORD:meal_planner}
+  jpa:
+    open-in-view: false
+    hibernate:
+      ddl-auto: validate
+    properties:
+      hibernate:
+        jdbc:
+          batch_size: 100
+        order_inserts: true
+  flyway:
+    locations: classpath:db/migration
+  servlet:
+    multipart:
+      max-file-size: 20MB
+      max-request-size: 20MB
+  security:
+    oauth2:
+      resourceserver:
+        jwt:
+          issuer-uri: ${OAUTH2_ISSUER_URI:http://localhost:8180/realms/meal-planner}
+
+server:
+  port: 8080
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info
+
+app:
+  cors:
+    allowed-origins:
+      - http://localhost:4200
+  ciqual:
+    # Fichier Ciqual (.xlsx) importé automatiquement au démarrage si la table des aliments est vide
+    auto-import-path: ${CIQUAL_IMPORT_PATH:}
+  import:
+    # Score minimal (0 à 1) pour rattacher un ingrédient importé à un aliment Ciqual
+    match-threshold: 0.45

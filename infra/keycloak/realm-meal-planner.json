@@ -1,0 +1,76 @@
+{
+  "realm": "meal-planner",
+  "displayName": "Meal Planner",
+  "enabled": true,
+  "registrationAllowed": true,
+  "registrationEmailAsUsername": false,
+  "resetPasswordAllowed": true,
+  "rememberMe": true,
+  "loginWithEmailAllowed": true,
+  "duplicateEmailsAllowed": false,
+  "sslRequired": "external",
+  "internationalizationEnabled": true,
+  "supportedLocales": ["fr", "en"],
+  "defaultLocale": "fr",
+  "accessTokenLifespan": 300,
+  "ssoSessionIdleTimeout": 1800,
+  "ssoSessionMaxLifespan": 36000,
+  "roles": {
+    "realm": [
+      { "name": "user", "description": "Utilisateur de l'application" },
+      { "name": "admin", "description": "Administrateur (imports de référence, modération)" }
+    ]
+  },
+  "defaultRole": {
+    "name": "default-roles-meal-planner",
+    "composite": true,
+    "composites": {
+      "realm": ["user", "offline_access", "uma_authorization"]
+    }
+  },
+  "clients": [
+    {
+      "clientId": "meal-planner-web",
+      "name": "Meal Planner - Front Angular",
+      "enabled": true,
+      "publicClient": true,
+      "protocol": "openid-connect",
+      "standardFlowEnabled": true,
+      "implicitFlowEnabled": false,
+      "directAccessGrantsEnabled": false,
+      "serviceAccountsEnabled": false,
+      "rootUrl": "http://localhost:4200",
+      "baseUrl": "/",
+      "redirectUris": ["http://localhost:4200/*"],
+      "webOrigins": ["http://localhost:4200"],
+      "attributes": {
+        "pkce.code.challenge.method": "S256",
+        "post.logout.redirect.uris": "http://localhost:4200/*"
+      },
+      "defaultClientScopes": ["web-origins", "acr", "profile", "roles", "basic", "email"],
+      "optionalClientScopes": ["offline_access"]
+    }
+  ],
+  "users": [
+    {
+      "username": "demo",
+      "email": "demo@meal-planner.local",
+      "firstName": "Demo",
+      "lastName": "Utilisateur",
+      "enabled": true,
+      "emailVerified": true,
+      "credentials": [{ "type": "password", "value": "demo", "temporary": false }],
+      "realmRoles": ["default-roles-meal-planner", "user"]
+    },
+    {
+      "username": "admin",
+      "email": "admin@meal-planner.local",
+      "firstName": "Admin",
+      "lastName": "Meal Planner",
+      "enabled": true,
+      "emailVerified": true,
+      "credentials": [{ "type": "password", "value": "admin", "temporary": false }],
+      "realmRoles": ["default-roles-meal-planner", "user", "admin"]
+    }
+  ]
+}
