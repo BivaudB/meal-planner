@@ -1,0 +1,6 @@
+# Fins de ligne normalisées. Les scripts shell exécutés dans les conteneurs Linux
+# doivent rester en LF, même après un clone sous Windows (sinon : "$'\r': command not found").
+* text=auto
+*.sh text eol=lf
+mvnw text eol=lf
+*.cmd text eol=crlf
