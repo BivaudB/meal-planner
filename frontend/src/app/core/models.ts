@@ -17,7 +17,7 @@ export interface Me {
 }
 
 export type Visibility = 'PRIVATE' | 'PUBLIC';
-export type RecipeSource = 'MANUAL' | 'IMPORT' | 'INSTAGRAM' | 'YOUTUBE';
+export type RecipeSource = 'MANUAL' | 'IMPORT' | 'CATALOG' | 'INSTAGRAM' | 'YOUTUBE';
 
 export interface RecipeSummary {
   id: number;
@@ -30,6 +30,7 @@ export interface RecipeSummary {
   ingredientCount: number;
   hasSteps: boolean;
   mine: boolean;
+  nutrition: Nutrition;
   updatedAt: string;
 }
 
@@ -45,11 +46,18 @@ export interface IngredientLine {
   matchScore: number | null;
 }
 
+/** Calories, protéines, glucides, lipides : les valeurs mises en avant partout. */
+export interface Macros {
+  energyKcal: number | null;
+  proteinG: number | null;
+  carbohydrateG: number | null;
+  fatG: number | null;
+}
+
 export interface Nutrition {
-  energyKcal: number;
-  proteinG: number;
-  carbohydrateG: number;
-  fatG: number;
+  total: Macros;
+  /** Null si le nombre de personnes n'est pas renseigné. */
+  perServing: Macros | null;
   ingredientsCounted: number;
   ingredientsTotal: number;
 }
@@ -155,6 +163,7 @@ export interface Recommendation {
   availableIngredients: number;
   coverage: number;
   missingIngredients: string[];
+  nutrition: Nutrition | null;
 }
 
 /** Unités reconnues par le backend (valeur stockée -> libellé affiché). */

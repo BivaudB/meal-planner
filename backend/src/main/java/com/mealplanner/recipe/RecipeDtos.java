@@ -27,6 +27,7 @@ public final class RecipeDtos {
         int ingredientCount,
         boolean hasSteps,
         boolean mine,
+        Nutrition nutrition,
         Instant updatedAt) {
     }
 
@@ -60,15 +61,22 @@ public final class RecipeDtos {
         Double matchScore) {
     }
 
-    /**
-     * Estimation nutritionnelle de la recette entière, calculée sur les ingrédients
-     * dont la quantité peut être convertie en grammes et qui sont rattachés à Ciqual.
-     */
-    public record Nutrition(
+    /** Les quatre valeurs mises en avant partout : calories, protéines, glucides, lipides. */
+    public record Macros(
         BigDecimal energyKcal,
         BigDecimal proteinG,
         BigDecimal carbohydrateG,
-        BigDecimal fatG,
+        BigDecimal fatG) {
+    }
+
+    /**
+     * Estimation nutritionnelle, calculée sur les ingrédients dont la quantité peut être
+     * convertie en grammes et qui sont rattachés à Ciqual. {@code perServing} est null si
+     * le nombre de personnes n'est pas renseigné.
+     */
+    public record Nutrition(
+        Macros total,
+        Macros perServing,
         int ingredientsCounted,
         int ingredientsTotal) {
     }

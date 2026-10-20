@@ -17,6 +17,10 @@
   --color-danger: #b23a2e;
   --color-danger-soft: #f6dcd8;
   --color-success: #2f7d4a;
+  /* Macronutriments (composant app-macros) */
+  --color-protein: #2f5d8a;
+  --color-carbs: #c9952b;
+  --color-fat: #b5543a;
 
   --font-display: 'Fraunces', Georgia, serif;
   --font-body: 'Inter', system-ui, -apple-system, 'Segoe UI', sans-serif;

@@ -40,8 +40,13 @@ app:
     allowed-origins:
       - http://localhost:4200
   ciqual:
-    # Fichier Ciqual (.xlsx) importé automatiquement au démarrage si la table des aliments est vide
-    auto-import-path: ${CIQUAL_IMPORT_PATH:}
+    # Fichier Ciqual (.xlsx) importé automatiquement au démarrage si la table des aliments est vide.
+    # Téléchargé dans data/ par "docker compose up" ; chemin relatif au dossier backend/
+    # (data/ciqual.xlsx est aussi essayé si le backend est lancé depuis la racine du dépôt).
+    auto-import-path: ${CIQUAL_IMPORT_PATH:../data/ciqual.xlsx}
+  catalog:
+    # Recettes de base (resources/seed/recipes.json) ajoutées au démarrage, en recettes publiques
+    enabled: ${RECIPE_CATALOG_ENABLED:true}
   import:
     # Score minimal (0 à 1) pour rattacher un ingrédient importé à un aliment Ciqual
     match-threshold: 0.45

@@ -44,18 +44,30 @@ Ouvrez http://localhost:4200 et connectez-vous avec un compte de démonstration 
 La page de connexion Keycloak permet aussi de créer un compte. Console d'administration
 Keycloak : http://localhost:8180 (admin / admin).
 
-### Charger le référentiel Ciqual
+### Données fournies : référentiel Ciqual et recettes de base
 
-Deux possibilités :
+Rien à faire : la base est remplie automatiquement au premier lancement.
 
-- **Depuis l'application** : connecté en `admin`, menu *Admin* → choisir le fichier
-  `Table_Ciqual_2025_FR_*.xlsx` → *Charger* (quelques secondes, 3 484 aliments).
-- **Au démarrage du backend** : placez le fichier dans `data/` (ignoré par Git) et lancez
-  `CIQUAL_IMPORT_PATH=../data/Table_Ciqual_2025_FR_2025_11_03.xlsx mvn spring-boot:run`.
-  L'import n'a lieu que si la table des aliments est vide.
+1. `docker compose up -d` lance aussi le service `ciqual-download`, qui télécharge une fois
+   la table Ciqual 2025 de l'Anses (≈ 1,5 Mo, [entrepôt Recherche Data Gouv](https://doi.org/10.57745/RDMHWY))
+   dans `data/ciqual.xlsx` (ignoré par Git). Supprimez ce fichier pour forcer un nouveau
+   téléchargement ; `CIQUAL_URL` permet de changer de source.
+2. Au démarrage, le backend importe `data/ciqual.xlsx` si la table des aliments est vide
+   (3 484 aliments, quelques secondes). Autre fichier : variable `CIQUAL_IMPORT_PATH`.
+3. Il ajoute ensuite les **recettes de base** de `backend/src/main/resources/seed/recipes.json`
+   (une vingtaine de plats courants avec étapes), en recettes publiques visibles de tous
+   (onglet *Partagées*) et donc proposées dans les *Suggestions*. Chaque ingrédient y est
+   rattaché à son code Ciqual (`ciqual`) ; une recette déjà présente n'est pas modifiée,
+   compléter le fichier suffit pour en ajouter. Désactivation : `RECIPE_CATALOG_ENABLED=false`.
 
-Chargez Ciqual **avant** d'importer des recettes : c'est lui qui permet de rattacher les
-ingrédients aux aliments et de calculer les valeurs nutritionnelles.
+Il reste possible de recharger Ciqual depuis l'application : connecté en `admin`, menu
+*Admin* → choisir le fichier `Table_Ciqual_2025_FR_*.xlsx` → *Charger*.
+
+### Valeurs nutritionnelles
+
+Calories, protéines, glucides et lipides sont affichés en priorité partout : pour 100 g sur
+les aliments (recherche et fiche), par personne sur les recettes (liste, fiche, suggestions),
+avec le total de la recette entière.
 
 ## Format d'import des recettes
 

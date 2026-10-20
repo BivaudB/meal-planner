@@ -4,13 +4,15 @@ import { Subject, catchError, debounceTime, distinctUntilChanged, of, switchMap 
 
 import { ApiService } from '../core/api.service';
 import { FoodSummary } from '../core/models';
+import { MacrosView } from './macros';
 
 /**
- * Champ de recherche d'aliment dans le référentiel Ciqual, avec suggestions.
- * Émet l'aliment choisi via (picked).
+ * Champ de recherche d'aliment dans le référentiel Ciqual, avec suggestions
+ * (calories et macronutriments pour 100 g). Émet l'aliment choisi via (picked).
  */
 @Component({
   selector: 'app-food-picker',
+  imports: [MacrosView],
   template: `
     <div class="picker">
       <input
@@ -29,9 +31,7 @@ import { FoodSummary } from '../core/models';
             <li>
               <button type="button" (mousedown)="pick(food)">
                 <span>{{ food.name }}</span>
-                @if (food.energyKcal !== null) {
-                  <span class="muted small">{{ food.energyKcal }} kcal/100 g</span>
-                }
+                <app-macros [macros]="food" />
               </button>
             </li>
           }
@@ -64,8 +64,8 @@ import { FoodSummary } from '../core/models';
     }
     .results button {
       display: flex;
-      justify-content: space-between;
-      gap: 12px;
+      flex-direction: column;
+      gap: 2px;
       width: 100%;
       text-align: left;
       border: 0;

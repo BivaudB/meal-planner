@@ -4,12 +4,13 @@ import { RouterLink } from '@angular/router';
 import { ApiService } from '../../core/api.service';
 import { errorMessage } from '../../core/errors';
 import { Page, RecipeSummary } from '../../core/models';
+import { MacrosView } from '../../shared/macros';
 
 type Scope = 'mine' | 'public';
 
 @Component({
   selector: 'app-recipe-list',
-  imports: [RouterLink],
+  imports: [RouterLink, MacrosView],
   template: `
     <section class="page">
       <div class="page-header">
@@ -44,8 +45,9 @@ type Scope = 'mine' | 'public';
         @if (p.content.length === 0) {
           <div class="empty">
             @if (scope() === 'mine') {
-              Aucune recette pour l'instant. <a routerLink="/import">Importez un fichier</a> ou
-              <a routerLink="/recettes/nouvelle">créez votre première recette</a>.
+              Aucune recette pour l'instant. <a routerLink="/import">Importez un fichier</a>,
+              <a routerLink="/recettes/nouvelle">créez votre première recette</a> ou parcourez les
+              <a href="" (click)="$event.preventDefault(); setScope('public')">recettes partagées</a>.
             } @else {
               Aucune recette partagée pour l'instant.
             }
@@ -55,6 +57,10 @@ type Scope = 'mine' | 'public';
             @for (recipe of p.content; track recipe.id) {
               <a class="card recipe" [routerLink]="['/recettes', recipe.id]">
                 <h3>{{ recipe.name }}</h3>
+                <div class="macros">
+                  <app-macros [macros]="recipe.nutrition.perServing ?? recipe.nutrition.total" />
+                  <span class="small muted">{{ recipe.nutrition.perServing ? 'par personne' : 'recette entière' }}</span>
+                </div>
                 <div class="row small muted">
                   <span>{{ recipe.ingredientCount }} ingrédient{{ recipe.ingredientCount > 1 ? 's' : '' }}</span>
                   @if (recipe.servings) {
@@ -73,6 +79,9 @@ type Scope = 'mine' | 'public';
                   }
                   @if (recipe.source === 'IMPORT') {
                     <span class="badge">Importée</span>
+                  }
+                  @if (recipe.source === 'CATALOG') {
+                    <span class="badge">Recette de base</span>
                   }
                 </div>
               </a>
@@ -116,6 +125,11 @@ type Scope = 'mine' | 'public';
     }
     .badges {
       gap: 6px;
+    }
+    .macros {
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
     }
     .pager {
       justify-content: center;

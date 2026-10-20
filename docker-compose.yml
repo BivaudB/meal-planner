@@ -1,4 +1,5 @@
 # Infrastructure locale : PostgreSQL 18 + Keycloak (serveur OAuth2 / OpenID Connect)
+# + téléchargement initial du référentiel Ciqual dans ./data
 # Démarrage : docker compose up -d
 services:
   postgres:
@@ -20,6 +21,28 @@ services:
       interval: 5s
       timeout: 5s
       retries: 20
+
+  # Téléchargement unique de la table Ciqual 2025 (Anses) dans ./data/ciqual.xlsx.
+  # Le backend l'importe au démarrage si la table des aliments est vide.
+  # Ne fait rien si le fichier est déjà présent (supprimez-le pour forcer une mise à jour).
+  ciqual-download:
+    image: curlimages/curl:8.17.0
+    container_name: meal-planner-ciqual-download
+    restart: "no"
+    user: root
+    environment:
+      CIQUAL_URL: ${CIQUAL_URL:-https://entrepot.recherche.data.gouv.fr/api/access/datafile/666260}
+    entrypoint: ["/bin/sh", "-c"]
+    command:
+      - |
+        if [ -s /data/ciqual.xlsx ]; then
+          echo "Ciqual déjà présent : /data/ciqual.xlsx"
+        else
+          echo "Téléchargement de Ciqual depuis $$CIQUAL_URL"
+          curl -fSL --retry 3 -o /data/ciqual.xlsx.part "$$CIQUAL_URL" && mv /data/ciqual.xlsx.part /data/ciqual.xlsx
+        fi
+    volumes:
+      - ./data:/data
 
   keycloak:
     image: quay.io/keycloak/keycloak:26.8

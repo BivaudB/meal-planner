@@ -68,6 +68,12 @@ convertis en `ROLE_USER` / `ROLE_ADMIN` côté Spring. Comptes de démo : demo/d
 - **Unités normalisées** : g, kg, mg, ml, cl, dl, l, cas, cac, pincee, piece, gousse,
   tranche, sachet, botte, verre, boite (voir `QuantityParser` et `UnitConversions`).
 - **Suggestions** : classement par part d'ingrédients disponibles dans le garde-manger.
+- **Données initiales** : `docker compose up` télécharge Ciqual dans `data/ciqual.xlsx`
+  (service `ciqual-download`), importé au démarrage par `CiqualStartupImport` (`@Order(1)`),
+  puis `RecipeCatalogSeeder` (`@Order(2)`) ajoute `resources/seed/recipes.json` en recettes
+  publiques (`source = CATALOG`) de l'utilisateur technique `system:catalog` (migration V2).
+- **Macros** : calories, protéines, glucides, lipides (`RecipeDtos.Macros`, composant
+  `shared/macros.ts`) sont affichés en priorité sur les aliments et les recettes.
 
 ## Agents
 

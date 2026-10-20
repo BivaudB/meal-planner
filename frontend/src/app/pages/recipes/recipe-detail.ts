@@ -5,10 +5,11 @@ import { Router, RouterLink } from '@angular/router';
 import { ApiService } from '../../core/api.service';
 import { errorMessage } from '../../core/errors';
 import { RecipeDetail, unitLabel } from '../../core/models';
+import { MacrosView } from '../../shared/macros';
 
 @Component({
   selector: 'app-recipe-detail',
-  imports: [RouterLink, DecimalPipe],
+  imports: [RouterLink, DecimalPipe, MacrosView],
   template: `
     <section class="page">
       <a routerLink="/recettes" class="back small">← Toutes les recettes</a>
@@ -78,19 +79,14 @@ import { RecipeDetail, unitLabel } from '../../core/models';
 
           <aside class="card nutrition">
             <h2>Valeurs nutritionnelles</h2>
-            <p class="small muted">Recette entière (estimation).</p>
-            <dl>
-              <dt>Énergie</dt>
-              <dd>{{ r.nutrition.energyKcal | number: '1.0-0' }} kcal</dd>
-              <dt>Protéines</dt>
-              <dd>{{ r.nutrition.proteinG | number: '1.0-1' }} g</dd>
-              <dt>Glucides</dt>
-              <dd>{{ r.nutrition.carbohydrateG | number: '1.0-1' }} g</dd>
-              <dt>Lipides</dt>
-              <dd>{{ r.nutrition.fatG | number: '1.0-1' }} g</dd>
-            </dl>
-            @if (r.servings && r.servings > 1) {
-              <p class="small">Soit environ {{ r.nutrition.energyKcal / r.servings | number: '1.0-0' }} kcal par personne.</p>
+            @if (r.nutrition.perServing; as perServing) {
+              <p class="small muted">Par personne (estimation)</p>
+              <app-macros [macros]="perServing" size="large" />
+              <p class="small muted total">Recette entière ({{ r.servings }} pers.)</p>
+              <app-macros [macros]="r.nutrition.total" />
+            } @else {
+              <p class="small muted">Recette entière (estimation)</p>
+              <app-macros [macros]="r.nutrition.total" size="large" />
             }
             <p class="small muted">
               Calcul basé sur {{ r.nutrition.ingredientsCounted }} ingrédient(s) sur {{ r.nutrition.ingredientsTotal }}
@@ -146,19 +142,8 @@ import { RecipeDetail, unitLabel } from '../../core/models';
       font-weight: 600;
       width: 1%;
     }
-    dl {
-      display: grid;
-      grid-template-columns: 1fr auto;
-      gap: 6px 12px;
-      margin: 0 0 12px;
-    }
-    dt {
-      color: var(--color-ink-muted);
-    }
-    dd {
-      margin: 0;
-      font-weight: 600;
-      text-align: right;
+    .total {
+      margin: 16px 0 4px;
     }
     ol {
       padding-left: 20px;

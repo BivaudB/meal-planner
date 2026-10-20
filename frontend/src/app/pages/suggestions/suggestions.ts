@@ -5,10 +5,11 @@ import { RouterLink } from '@angular/router';
 import { ApiService } from '../../core/api.service';
 import { errorMessage } from '../../core/errors';
 import { Recommendation } from '../../core/models';
+import { MacrosView } from '../../shared/macros';
 
 @Component({
   selector: 'app-suggestions',
-  imports: [RouterLink, PercentPipe],
+  imports: [RouterLink, PercentPipe, MacrosView],
   template: `
     <section class="page">
       <div class="page-header">
@@ -40,6 +41,12 @@ import { Recommendation } from '../../core/models';
               <h3>{{ s.name }}</h3>
               <span class="score">{{ s.coverage | percent: '1.0-0' }}</span>
             </div>
+            @if (s.nutrition; as n) {
+              <div class="macros">
+                <app-macros [macros]="n.perServing ?? n.total" />
+                <span class="small muted">{{ n.perServing ? 'par personne' : 'recette entière' }}</span>
+              </div>
+            }
             <div class="bar"><span [style.width.%]="s.coverage * 100"></span></div>
             <p class="small muted">
               {{ s.availableIngredients }} ingrédient(s) disponible(s) sur {{ s.totalIngredients }}
@@ -76,6 +83,13 @@ import { Recommendation } from '../../core/models';
     .score {
       font: 700 1.3rem var(--font-display);
       color: var(--color-primary);
+    }
+    .macros {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 6px;
     }
     .bar {
       height: 6px;

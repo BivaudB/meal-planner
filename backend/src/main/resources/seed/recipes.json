@@ -1,0 +1,373 @@
+[
+  {
+    "name": "Omelette aux champignons",
+    "description": "Une omelette baveuse, riche en protéines, prête en 15 minutes.",
+    "servings": 2, "prepMinutes": 5, "cookMinutes": 10,
+    "ingredients": [
+      { "name": "Oeufs", "quantity": "240 g", "ciqual": 22000 },
+      { "name": "Champignons de Paris", "quantity": "150 g", "ciqual": 20056 },
+      { "name": "Lait demi-écrémé", "quantity": "3 cl", "ciqual": 19041 },
+      { "name": "Beurre", "quantity": "10 g", "ciqual": 16400 },
+      { "name": "Sel", "quantity": "1 pincée", "ciqual": 11058 },
+      { "name": "Poivre", "quantity": "1 pincée", "ciqual": 11015 }
+    ],
+    "steps": [
+      "Émincer les champignons et les faire revenir 5 minutes dans la moitié du beurre.",
+      "Battre les oeufs avec le lait, le sel et le poivre.",
+      "Faire fondre le reste du beurre, verser les oeufs et cuire à feu moyen en ramenant les bords vers le centre.",
+      "Ajouter les champignons, plier l'omelette et servir aussitôt."
+    ]
+  },
+  {
+    "name": "Pâtes à la bolognaise",
+    "description": "Le classique familial : sauce tomate mijotée au boeuf haché.",
+    "servings": 4, "prepMinutes": 15, "cookMinutes": 40,
+    "ingredients": [
+      { "name": "Pâtes sèches", "quantity": "400 g", "ciqual": 9810 },
+      { "name": "Boeuf haché 5 %", "quantity": "400 g", "ciqual": 6250 },
+      { "name": "Tomates pelées", "quantity": "400 g", "ciqual": 20137 },
+      { "name": "Oignon", "quantity": "100 g", "ciqual": 20034 },
+      { "name": "Carotte", "quantity": "100 g", "ciqual": 20009 },
+      { "name": "Ail", "quantity": "10 g", "ciqual": 11000 },
+      { "name": "Huile d'olive", "quantity": "2 c. à soupe", "ciqual": 17270 },
+      { "name": "Herbes de Provence", "quantity": "1 c. à café", "ciqual": 11060 }
+    ],
+    "steps": [
+      "Hacher finement l'oignon, l'ail et la carotte, puis les faire revenir 5 minutes dans l'huile d'olive.",
+      "Ajouter le boeuf haché et le faire dorer en l'émiettant.",
+      "Verser les tomates pelées et les herbes, saler, poivrer et laisser mijoter 30 minutes à couvert.",
+      "Cuire les pâtes dans une grande casserole d'eau salée et les servir nappées de sauce."
+    ]
+  },
+  {
+    "name": "Poulet au curry et lait de coco",
+    "description": "Un curry doux et crémeux servi avec du riz.",
+    "servings": 4, "prepMinutes": 15, "cookMinutes": 25,
+    "ingredients": [
+      { "name": "Filet de poulet", "quantity": "600 g", "ciqual": 36017 },
+      { "name": "Lait de coco", "quantity": "400 ml", "ciqual": 18041 },
+      { "name": "Oignon", "quantity": "150 g", "ciqual": 20034 },
+      { "name": "Curry en poudre", "quantity": "2 c. à soupe", "ciqual": 11005 },
+      { "name": "Riz blanc", "quantity": "300 g", "ciqual": 9100 },
+      { "name": "Huile de tournesol", "quantity": "1 c. à soupe", "ciqual": 17440 },
+      { "name": "Coriandre fraîche", "quantity": "10 g", "ciqual": 11094 }
+    ],
+    "steps": [
+      "Couper le poulet en morceaux et émincer l'oignon.",
+      "Faire revenir l'oignon dans l'huile, ajouter le poulet et le curry, puis faire dorer 5 minutes.",
+      "Verser le lait de coco et laisser mijoter 15 minutes.",
+      "Pendant ce temps, cuire le riz. Servir parsemé de coriandre."
+    ]
+  },
+  {
+    "name": "Dahl de lentilles corail",
+    "description": "Plat végétarien réconfortant, riche en protéines végétales et en fibres.",
+    "servings": 4, "prepMinutes": 10, "cookMinutes": 25,
+    "ingredients": [
+      { "name": "Lentilles corail", "quantity": "250 g", "ciqual": 20535 },
+      { "name": "Lait de coco", "quantity": "400 ml", "ciqual": 18041 },
+      { "name": "Tomates pelées", "quantity": "400 g", "ciqual": 20137 },
+      { "name": "Oignon", "quantity": "100 g", "ciqual": 20034 },
+      { "name": "Ail", "quantity": "10 g", "ciqual": 11000 },
+      { "name": "Gingembre frais", "quantity": "15 g", "ciqual": 11074 },
+      { "name": "Curry en poudre", "quantity": "1 c. à soupe", "ciqual": 11005 },
+      { "name": "Cumin", "quantity": "1 c. à café", "ciqual": 11042 }
+    ],
+    "steps": [
+      "Faire revenir l'oignon, l'ail et le gingembre hachés avec les épices.",
+      "Ajouter les lentilles rincées, les tomates, le lait de coco et 40 cl d'eau.",
+      "Laisser mijoter 20 minutes en remuant jusqu'à ce que les lentilles soient fondantes.",
+      "Saler, poivrer et servir avec du riz ou du pain."
+    ]
+  },
+  {
+    "name": "Salade de quinoa à la feta",
+    "description": "Salade fraîche et complète, idéale en lunch box.",
+    "servings": 2, "prepMinutes": 15, "cookMinutes": 15,
+    "ingredients": [
+      { "name": "Quinoa", "quantity": "150 g", "ciqual": 9340 },
+      { "name": "Feta", "quantity": "100 g", "ciqual": 12066 },
+      { "name": "Concombre", "quantity": "150 g", "ciqual": 20019 },
+      { "name": "Tomates cerises", "quantity": "200 g", "ciqual": 20172 },
+      { "name": "Persil", "quantity": "10 g", "ciqual": 11014 },
+      { "name": "Huile d'olive", "quantity": "2 c. à soupe", "ciqual": 17270 },
+      { "name": "Jus de citron", "quantity": "2 c. à soupe", "ciqual": 2028 }
+    ],
+    "steps": [
+      "Rincer le quinoa et le cuire 12 à 15 minutes dans deux fois son volume d'eau salée, puis le laisser refroidir.",
+      "Couper le concombre en dés, les tomates en deux et la feta en cubes.",
+      "Mélanger le tout avec le persil ciselé, l'huile d'olive et le jus de citron."
+    ]
+  },
+  {
+    "name": "Saumon, patate douce et brocoli",
+    "description": "Assiette équilibrée cuite au four : protéines, glucides complexes et légumes verts.",
+    "servings": 2, "prepMinutes": 10, "cookMinutes": 25,
+    "ingredients": [
+      { "name": "Pavés de saumon", "quantity": "260 g", "ciqual": 26036 },
+      { "name": "Patate douce", "quantity": "400 g", "ciqual": 4101 },
+      { "name": "Brocoli", "quantity": "300 g", "ciqual": 20057 },
+      { "name": "Huile d'olive", "quantity": "1 c. à soupe", "ciqual": 17270 },
+      { "name": "Jus de citron", "quantity": "1 c. à soupe", "ciqual": 2028 }
+    ],
+    "steps": [
+      "Préchauffer le four à 200 °C. Couper la patate douce en cubes, l'arroser d'huile et l'enfourner 10 minutes.",
+      "Ajouter les fleurettes de brocoli et les pavés de saumon sur la plaque.",
+      "Cuire encore 12 à 15 minutes. Arroser de jus de citron avant de servir."
+    ]
+  },
+  {
+    "name": "Ratatouille",
+    "description": "Les légumes du soleil mijotés à l'huile d'olive.",
+    "servings": 4, "prepMinutes": 20, "cookMinutes": 45,
+    "ingredients": [
+      { "name": "Aubergine", "quantity": "300 g", "ciqual": 20053 },
+      { "name": "Courgette", "quantity": "300 g", "ciqual": 20020 },
+      { "name": "Poivron rouge", "quantity": "200 g", "ciqual": 20087 },
+      { "name": "Tomates", "quantity": "400 g", "ciqual": 20385 },
+      { "name": "Oignon", "quantity": "150 g", "ciqual": 20034 },
+      { "name": "Ail", "quantity": "10 g", "ciqual": 11000 },
+      { "name": "Huile d'olive", "quantity": "3 c. à soupe", "ciqual": 17270 },
+      { "name": "Herbes de Provence", "quantity": "1 c. à café", "ciqual": 11060 }
+    ],
+    "steps": [
+      "Couper tous les légumes en dés.",
+      "Faire revenir l'oignon et l'ail dans l'huile, puis ajouter le poivron, l'aubergine et la courgette.",
+      "Ajouter les tomates et les herbes, saler, poivrer et laisser mijoter 40 minutes à feu doux."
+    ]
+  },
+  {
+    "name": "Chili con carne",
+    "description": "Boeuf, haricots rouges et épices, servi avec du riz.",
+    "servings": 4, "prepMinutes": 15, "cookMinutes": 40,
+    "ingredients": [
+      { "name": "Boeuf haché 5 %", "quantity": "400 g", "ciqual": 6250 },
+      { "name": "Haricots rouges en conserve", "quantity": "400 g", "ciqual": 20524 },
+      { "name": "Tomates pelées", "quantity": "400 g", "ciqual": 20137 },
+      { "name": "Oignon", "quantity": "150 g", "ciqual": 20034 },
+      { "name": "Poivron rouge", "quantity": "150 g", "ciqual": 20087 },
+      { "name": "Maïs doux en conserve", "quantity": "150 g", "ciqual": 20066 },
+      { "name": "Cumin", "quantity": "1 c. à café", "ciqual": 11042 },
+      { "name": "Paprika", "quantity": "1 c. à café", "ciqual": 11049 },
+      { "name": "Riz blanc", "quantity": "250 g", "ciqual": 9100 }
+    ],
+    "steps": [
+      "Faire revenir l'oignon et le poivron émincés, puis ajouter la viande et les épices.",
+      "Ajouter les tomates, les haricots rouges égouttés et le maïs. Laisser mijoter 30 minutes.",
+      "Cuire le riz et servir le chili par-dessus."
+    ]
+  },
+  {
+    "name": "Porridge aux fraises",
+    "description": "Petit-déjeuner rassasiant aux flocons d'avoine.",
+    "servings": 1, "prepMinutes": 2, "cookMinutes": 5,
+    "ingredients": [
+      { "name": "Flocons d'avoine", "quantity": "50 g", "ciqual": 32140 },
+      { "name": "Lait demi-écrémé", "quantity": "250 ml", "ciqual": 19041 },
+      { "name": "Fraises", "quantity": "100 g", "ciqual": 13014 },
+      { "name": "Miel", "quantity": "1 c. à café", "ciqual": 31008 }
+    ],
+    "steps": [
+      "Porter le lait à frémissement avec les flocons d'avoine et cuire 5 minutes en remuant.",
+      "Verser dans un bol, ajouter les fraises coupées et le miel."
+    ]
+  },
+  {
+    "name": "Salade de pois chiches",
+    "description": "Salade végétarienne croquante, riche en fibres.",
+    "servings": 2, "prepMinutes": 10, "cookMinutes": 0,
+    "ingredients": [
+      { "name": "Pois chiches en conserve", "quantity": "265 g", "ciqual": 20532 },
+      { "name": "Tomates cerises", "quantity": "150 g", "ciqual": 20172 },
+      { "name": "Concombre", "quantity": "150 g", "ciqual": 20019 },
+      { "name": "Oignon rouge", "quantity": "50 g", "ciqual": 20238 },
+      { "name": "Persil", "quantity": "10 g", "ciqual": 11014 },
+      { "name": "Huile d'olive", "quantity": "2 c. à soupe", "ciqual": 17270 },
+      { "name": "Jus de citron", "quantity": "1 c. à soupe", "ciqual": 2028 },
+      { "name": "Cumin", "quantity": "1 pincée", "ciqual": 11042 }
+    ],
+    "steps": [
+      "Rincer et égoutter les pois chiches.",
+      "Couper les tomates, le concombre et l'oignon rouge, ciseler le persil.",
+      "Mélanger le tout avec l'huile, le jus de citron et le cumin. Saler et poivrer."
+    ]
+  },
+  {
+    "name": "Cabillaud, haricots verts et riz",
+    "description": "Poisson blanc maigre, idéal pour un repas léger et protéiné.",
+    "servings": 2, "prepMinutes": 10, "cookMinutes": 20,
+    "ingredients": [
+      { "name": "Dos de cabillaud", "quantity": "300 g", "ciqual": 26043 },
+      { "name": "Haricots verts", "quantity": "300 g", "ciqual": 20061 },
+      { "name": "Riz blanc", "quantity": "150 g", "ciqual": 9100 },
+      { "name": "Beurre", "quantity": "15 g", "ciqual": 16400 },
+      { "name": "Jus de citron", "quantity": "1 c. à soupe", "ciqual": 2028 },
+      { "name": "Persil", "quantity": "5 g", "ciqual": 11014 }
+    ],
+    "steps": [
+      "Cuire le riz et les haricots verts (10 minutes à l'eau bouillante salée ou à la vapeur).",
+      "Poêler le cabillaud 3 à 4 minutes par face dans le beurre.",
+      "Servir avec le jus de citron et le persil ciselé."
+    ]
+  },
+  {
+    "name": "Velouté de poireaux et pommes de terre",
+    "description": "Soupe onctueuse et économique.",
+    "servings": 4, "prepMinutes": 15, "cookMinutes": 30,
+    "ingredients": [
+      { "name": "Poireaux", "quantity": "500 g", "ciqual": 20039 },
+      { "name": "Pommes de terre", "quantity": "400 g", "ciqual": 4008 },
+      { "name": "Oignon", "quantity": "100 g", "ciqual": 20034 },
+      { "name": "Bouillon de légumes déshydraté", "quantity": "10 g", "ciqual": 11041 },
+      { "name": "Crème légère", "quantity": "10 cl", "ciqual": 19431 },
+      { "name": "Beurre", "quantity": "10 g", "ciqual": 16400 }
+    ],
+    "steps": [
+      "Faire suer l'oignon et les poireaux émincés dans le beurre.",
+      "Ajouter les pommes de terre en morceaux, le bouillon et 1 litre d'eau. Cuire 25 minutes.",
+      "Mixer, ajouter la crème, rectifier l'assaisonnement."
+    ]
+  },
+  {
+    "name": "Bol yaourt grec, banane et avoine",
+    "description": "Collation ou petit-déjeuner protéiné sans cuisson.",
+    "servings": 1, "prepMinutes": 5, "cookMinutes": 0,
+    "ingredients": [
+      { "name": "Yaourt à la grecque", "quantity": "150 g", "ciqual": 19860 },
+      { "name": "Banane", "quantity": "120 g", "ciqual": 13005 },
+      { "name": "Flocons d'avoine", "quantity": "30 g", "ciqual": 32140 },
+      { "name": "Miel", "quantity": "1 c. à café", "ciqual": 31008 }
+    ],
+    "steps": [
+      "Verser le yaourt dans un bol, ajouter la banane en rondelles et les flocons d'avoine.",
+      "Arroser de miel."
+    ]
+  },
+  {
+    "name": "Wok de poulet aux légumes",
+    "description": "Sauté express à la sauce soja et au gingembre.",
+    "servings": 2, "prepMinutes": 15, "cookMinutes": 15,
+    "ingredients": [
+      { "name": "Filet de poulet", "quantity": "300 g", "ciqual": 36017 },
+      { "name": "Brocoli", "quantity": "200 g", "ciqual": 20057 },
+      { "name": "Carotte", "quantity": "150 g", "ciqual": 20009 },
+      { "name": "Poivron rouge", "quantity": "150 g", "ciqual": 20087 },
+      { "name": "Sauce soja", "quantity": "3 c. à soupe", "ciqual": 11104 },
+      { "name": "Gingembre frais", "quantity": "10 g", "ciqual": 11074 },
+      { "name": "Ail", "quantity": "5 g", "ciqual": 11000 },
+      { "name": "Huile de tournesol", "quantity": "1 c. à soupe", "ciqual": 17440 },
+      { "name": "Riz blanc", "quantity": "150 g", "ciqual": 9100 }
+    ],
+    "steps": [
+      "Cuire le riz. Couper le poulet en lanières et les légumes en petits morceaux.",
+      "Saisir le poulet dans l'huile bien chaude, puis le réserver.",
+      "Sauter les légumes avec l'ail et le gingembre 5 minutes, remettre le poulet et déglacer à la sauce soja.",
+      "Servir avec le riz."
+    ]
+  },
+  {
+    "name": "Pâtes au thon et à la tomate",
+    "description": "Recette de placard, prête en 15 minutes.",
+    "servings": 2, "prepMinutes": 5, "cookMinutes": 12,
+    "ingredients": [
+      { "name": "Pâtes sèches", "quantity": "200 g", "ciqual": 9810 },
+      { "name": "Thon au naturel", "quantity": "140 g", "ciqual": 26039 },
+      { "name": "Coulis de tomate", "quantity": "200 g", "ciqual": 20260 },
+      { "name": "Oignon", "quantity": "50 g", "ciqual": 20034 },
+      { "name": "Huile d'olive", "quantity": "1 c. à soupe", "ciqual": 17270 },
+      { "name": "Basilic", "quantity": "5 g", "ciqual": 11033 }
+    ],
+    "steps": [
+      "Cuire les pâtes.",
+      "Faire revenir l'oignon dans l'huile, ajouter le coulis et le thon émietté, chauffer 5 minutes.",
+      "Mélanger avec les pâtes égouttées et le basilic."
+    ]
+  },
+  {
+    "name": "Salade caprese",
+    "description": "Tomates, mozzarella et basilic : l'entrée italienne incontournable.",
+    "servings": 2, "prepMinutes": 10, "cookMinutes": 0,
+    "ingredients": [
+      { "name": "Tomates", "quantity": "300 g", "ciqual": 20385 },
+      { "name": "Mozzarella", "quantity": "250 g", "ciqual": 19590 },
+      { "name": "Basilic", "quantity": "10 g", "ciqual": 11033 },
+      { "name": "Huile d'olive", "quantity": "2 c. à soupe", "ciqual": 17270 },
+      { "name": "Vinaigre balsamique", "quantity": "1 c. à soupe", "ciqual": 11091 }
+    ],
+    "steps": [
+      "Trancher les tomates et la mozzarella, les disposer en alternance.",
+      "Parsemer de basilic, arroser d'huile et de vinaigre balsamique. Saler, poivrer."
+    ]
+  },
+  {
+    "name": "Croque-monsieur",
+    "description": "Le grand classique des soirs pressés.",
+    "servings": 2, "prepMinutes": 5, "cookMinutes": 10,
+    "ingredients": [
+      { "name": "Pain de mie", "quantity": "120 g", "ciqual": 7200 },
+      { "name": "Jambon cuit", "quantity": "80 g", "ciqual": 28910 },
+      { "name": "Emmental râpé", "quantity": "60 g", "ciqual": 12118 },
+      { "name": "Beurre", "quantity": "15 g", "ciqual": 16400 }
+    ],
+    "steps": [
+      "Beurrer les tranches de pain de mie sur une face.",
+      "Garnir de jambon et d'emmental, refermer (face beurrée à l'extérieur) et parsemer d'emmental.",
+      "Cuire 10 minutes au four à 200 °C ou dans un appareil à croque-monsieur."
+    ]
+  },
+  {
+    "name": "Pancakes",
+    "description": "Pancakes moelleux pour le brunch.",
+    "servings": 4, "prepMinutes": 10, "cookMinutes": 20,
+    "ingredients": [
+      { "name": "Farine de blé", "quantity": "250 g", "ciqual": 9435 },
+      { "name": "Oeufs", "quantity": "120 g", "ciqual": 22000 },
+      { "name": "Lait demi-écrémé", "quantity": "300 ml", "ciqual": 19041 },
+      { "name": "Sucre", "quantity": "30 g", "ciqual": 31016 },
+      { "name": "Beurre", "quantity": "30 g", "ciqual": 16400 },
+      { "name": "Sel", "quantity": "1 pincée", "ciqual": 11058 }
+    ],
+    "steps": [
+      "Mélanger la farine, le sucre et le sel. Ajouter les oeufs puis le lait progressivement.",
+      "Incorporer le beurre fondu et laisser reposer 10 minutes.",
+      "Cuire des petites louches de pâte dans une poêle chaude, 1 à 2 minutes par face."
+    ]
+  },
+  {
+    "name": "Lentilles aux carottes et lardons",
+    "description": "Plat mijoté de saison, riche en fibres.",
+    "servings": 4, "prepMinutes": 10, "cookMinutes": 35,
+    "ingredients": [
+      { "name": "Lentilles vertes", "quantity": "300 g", "ciqual": 20585 },
+      { "name": "Carottes", "quantity": "200 g", "ciqual": 20009 },
+      { "name": "Oignon", "quantity": "100 g", "ciqual": 20034 },
+      { "name": "Lardons fumés", "quantity": "150 g", "ciqual": 28720 },
+      { "name": "Bouillon de volaille déshydraté", "quantity": "10 g", "ciqual": 11174 },
+      { "name": "Thym", "quantity": "1 c. à café", "ciqual": 11038 }
+    ],
+    "steps": [
+      "Faire dorer les lardons et l'oignon émincé dans une cocotte.",
+      "Ajouter les carottes en rondelles, les lentilles rincées, le thym, le bouillon et trois fois le volume d'eau.",
+      "Cuire 30 minutes à frémissement, jusqu'à ce que les lentilles soient tendres."
+    ]
+  },
+  {
+    "name": "Taboulé",
+    "description": "Semoule, crudités et herbes fraîches, à préparer la veille.",
+    "servings": 4, "prepMinutes": 20, "cookMinutes": 0,
+    "ingredients": [
+      { "name": "Semoule de blé", "quantity": "200 g", "ciqual": 9610 },
+      { "name": "Tomates", "quantity": "300 g", "ciqual": 20385 },
+      { "name": "Concombre", "quantity": "200 g", "ciqual": 20019 },
+      { "name": "Persil", "quantity": "30 g", "ciqual": 11014 },
+      { "name": "Oignon rouge", "quantity": "50 g", "ciqual": 20238 },
+      { "name": "Huile d'olive", "quantity": "4 c. à soupe", "ciqual": 17270 },
+      { "name": "Jus de citron", "quantity": "4 c. à soupe", "ciqual": 2028 }
+    ],
+    "steps": [
+      "Verser 20 cl d'eau bouillante salée sur la semoule, couvrir 5 minutes puis égrainer.",
+      "Ajouter les légumes en petits dés, le persil et l'oignon ciselés.",
+      "Assaisonner avec l'huile et le citron, puis réserver au frais au moins une heure."
+    ]
+  }
+]

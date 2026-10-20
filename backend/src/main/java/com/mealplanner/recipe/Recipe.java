@@ -25,7 +25,8 @@ public class Recipe {
 
     public enum Visibility { PRIVATE, PUBLIC }
 
-    public enum Source { MANUAL, IMPORT, INSTAGRAM, YOUTUBE }
+    /** CATALOG : recette de base fournie avec l'application (resources/seed/recipes.json). */
+    public enum Source { MANUAL, IMPORT, CATALOG, INSTAGRAM, YOUTUBE }
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

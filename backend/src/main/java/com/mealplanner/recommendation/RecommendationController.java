@@ -4,6 +4,7 @@ import java.sql.Array;
 import java.sql.SQLException;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.jdbc.core.simple.JdbcClient;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -11,6 +12,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.mealplanner.recipe.RecipeDtos.Nutrition;
+import com.mealplanner.recipe.RecipeService;
 import com.mealplanner.user.CurrentUserService;
 
 /**
@@ -53,21 +56,24 @@ public class RecommendationController {
 
     private final JdbcClient jdbc;
     private final CurrentUserService currentUser;
+    private final RecipeService recipeService;
 
-    public RecommendationController(JdbcClient jdbc, CurrentUserService currentUser) {
+    public RecommendationController(JdbcClient jdbc, CurrentUserService currentUser, RecipeService recipeService) {
         this.jdbc = jdbc;
         this.currentUser = currentUser;
+        this.recipeService = recipeService;
     }
 
     public record Recommendation(Long recipeId, String name, Integer servings, Integer prepMinutes,
                                  Integer cookMinutes, boolean mine, int totalIngredients,
-                                 int availableIngredients, double coverage, List<String> missingIngredients) {
+                                 int availableIngredients, double coverage, List<String> missingIngredients,
+                                 Nutrition nutrition) {
     }
 
     @GetMapping
     public List<Recommendation> recommend(@RequestParam(name = "maxMissing", defaultValue = "3") int maxMissing,
                                           @RequestParam(name = "limit", defaultValue = "20") int limit) {
-        return jdbc.sql(SQL)
+        List<Recommendation> ranked = jdbc.sql(SQL)
             .param("userId", currentUser.currentUserId())
             .param("maxMissing", Math.clamp(maxMissing, 0, 50))
             .param("limit", Math.clamp(limit, 1, 100))
@@ -84,9 +90,17 @@ public class RecommendationController {
                     total,
                     available,
                     total == 0 ? 0 : (double) available / total,
-                    toList(rs.getArray("missing")));
+                    toList(rs.getArray("missing")),
+                    null);
             })
             .list();
+        Map<Long, Nutrition> nutrition = recipeService.nutritionByRecipe(
+            ranked.stream().map(Recommendation::recipeId).toList());
+        return ranked.stream()
+            .map(r -> new Recommendation(r.recipeId(), r.name(), r.servings(), r.prepMinutes(), r.cookMinutes(),
+                r.mine(), r.totalIngredients(), r.availableIngredients(), r.coverage(), r.missingIngredients(),
+                nutrition.get(r.recipeId())))
+            .toList();
     }
 
     private static List<String> toList(Array array) throws SQLException {

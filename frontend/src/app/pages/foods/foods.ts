@@ -5,10 +5,11 @@ import { ApiService } from '../../core/api.service';
 import { errorMessage } from '../../core/errors';
 import { FoodDetail, FoodSummary } from '../../core/models';
 import { FoodPicker } from '../../shared/food-picker';
+import { MacrosView } from '../../shared/macros';
 
 @Component({
   selector: 'app-foods',
-  imports: [FoodPicker, DecimalPipe],
+  imports: [FoodPicker, DecimalPipe, MacrosView],
   template: `
     <section class="page">
       <div class="page-header">
@@ -35,13 +36,13 @@ import { FoodPicker } from '../../shared/food-picker';
               · <em>{{ f.scientificName }}</em>
             }
           </p>
+          <p class="small muted per">Pour 100 g</p>
+          <app-macros [macros]="f" size="large" />
           <div class="key">
-            <div><span>Énergie</span><strong>{{ f.energyKcal ?? '—' }} kcal</strong></div>
-            <div><span>Protéines</span><strong>{{ f.proteinG ?? '—' }} g</strong></div>
-            <div><span>Glucides</span><strong>{{ f.carbohydrateG ?? '—' }} g</strong></div>
-            <div><span>Lipides</span><strong>{{ f.fatG ?? '—' }} g</strong></div>
-            <div><span>Fibres</span><strong>{{ f.fiberG ?? '—' }} g</strong></div>
-            <div><span>Sel</span><strong>{{ f.saltG ?? '—' }} g</strong></div>
+            <div><span>dont sucres</span><strong>{{ (f.sugarsG | number: '1.0-2') ?? '—' }} g</strong></div>
+            <div><span>dont AG saturés</span><strong>{{ (f.saturatedFatG | number: '1.0-2') ?? '—' }} g</strong></div>
+            <div><span>Fibres</span><strong>{{ (f.fiberG | number: '1.0-2') ?? '—' }} g</strong></div>
+            <div><span>Sel</span><strong>{{ (f.saltG | number: '1.0-2') ?? '—' }} g</strong></div>
           </div>
           <details>
             <summary>Composition détaillée ({{ f.nutrients.length }} constituants)</summary>
@@ -72,25 +73,28 @@ import { FoodPicker } from '../../shared/food-picker';
     </section>
   `,
   styles: `
+    .per {
+      margin: 12px 0 6px;
+    }
     .key {
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
-      gap: 10px;
-      margin: 16px 0;
+      grid-template-columns: repeat(auto-fit, minmax(110px, 1fr));
+      gap: 8px;
+      margin: 12px 0 16px;
     }
     .key div {
       display: flex;
       flex-direction: column;
-      padding: 12px;
+      padding: 6px 10px;
       border-radius: var(--radius-sm);
-      background: var(--color-surface-muted);
+      border: 1px solid var(--color-border);
     }
     .key span {
-      font-size: 0.8rem;
+      font-size: 0.75rem;
       color: var(--color-ink-muted);
     }
     .key strong {
-      font: 600 1.2rem var(--font-display);
+      font-weight: 500;
     }
     summary {
       cursor: pointer;

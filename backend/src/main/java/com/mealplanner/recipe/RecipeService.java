@@ -3,12 +3,15 @@ package com.mealplanner.recipe;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.function.Function;
+import java.util.stream.Collectors;
 
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
@@ -21,6 +24,7 @@ import com.mealplanner.food.FoodDtos.FoodSummary;
 import com.mealplanner.food.FoodRepository;
 import com.mealplanner.recipe.RecipeDtos.IngredientLine;
 import com.mealplanner.recipe.RecipeDtos.IngredientRequest;
+import com.mealplanner.recipe.RecipeDtos.Macros;
 import com.mealplanner.recipe.RecipeDtos.Nutrition;
 import com.mealplanner.recipe.RecipeDtos.RecipeDetail;
 import com.mealplanner.recipe.RecipeDtos.RecipeRequest;
@@ -43,16 +47,22 @@ public class RecipeService {
 
     @Transactional(readOnly = true)
     public PageResponse<RecipeSummary> listMine(Long userId, String query, int page, int size) {
-        return PageResponse.of(
-            recipes.findOwned(userId, normalizeQuery(query), pageRequest(page, size)),
-            recipe -> toSummary(recipe, userId));
+        return toSummaries(recipes.findOwned(userId, normalizeQuery(query), pageRequest(page, size)), userId);
     }
 
     @Transactional(readOnly = true)
     public PageResponse<RecipeSummary> listPublic(Long userId, String query, int page, int size) {
-        return PageResponse.of(
+        return toSummaries(
             recipes.findByVisibility(Recipe.Visibility.PUBLIC, normalizeQuery(query), pageRequest(page, size)),
-            recipe -> toSummary(recipe, userId));
+            userId);
+    }
+
+    /** Valeurs nutritionnelles d'un ensemble de recettes (pour les suggestions), par identifiant. */
+    @Transactional(readOnly = true)
+    public Map<Long, Nutrition> nutritionByRecipe(Collection<Long> recipeIds) {
+        List<Recipe> found = recipes.findAllById(recipeIds);
+        Map<Long, FoodSummary> linkedFoods = linkedFoods(found);
+        return found.stream().collect(Collectors.toMap(Recipe::getId, r -> nutrition(r, linkedFoods)));
     }
 
     /** Lecture : propriétaire, ou n'importe qui si la recette est publique. */
@@ -130,15 +140,27 @@ public class RecipeService {
         return recipe;
     }
 
-    private RecipeSummary toSummary(Recipe recipe, Long userId) {
+    private PageResponse<RecipeSummary> toSummaries(Page<Recipe> page, Long userId) {
+        // Aliments de toute la page chargés en une requête
+        Map<Long, FoodSummary> linkedFoods = linkedFoods(page.getContent());
+        return PageResponse.of(page, recipe -> toSummary(recipe, userId, linkedFoods));
+    }
+
+    private RecipeSummary toSummary(Recipe recipe, Long userId, Map<Long, FoodSummary> linkedFoods) {
         return new RecipeSummary(recipe.getId(), recipe.getName(), recipe.getServings(), recipe.getPrepMinutes(),
             recipe.getCookMinutes(), recipe.getVisibility(), recipe.getSource(), recipe.getIngredients().size(),
-            !recipe.getSteps().isEmpty(), recipe.isOwnedBy(userId), recipe.getUpdatedAt());
+            !recipe.getSteps().isEmpty(), recipe.isOwnedBy(userId), nutrition(recipe, linkedFoods),
+            recipe.getUpdatedAt());
+    }
+
+    private Map<Long, FoodSummary> linkedFoods(Collection<Recipe> list) {
+        return foods.findSummaries(list.stream()
+            .flatMap(r -> r.getIngredients().stream())
+            .map(RecipeIngredient::getFoodId).filter(Objects::nonNull).distinct().toList());
     }
 
     private RecipeDetail toDetail(Recipe recipe, Long userId) {
-        Map<Long, FoodSummary> linkedFoods = foods.findSummaries(recipe.getIngredients().stream()
-            .map(RecipeIngredient::getFoodId).filter(Objects::nonNull).distinct().toList());
+        Map<Long, FoodSummary> linkedFoods = linkedFoods(List.of(recipe));
 
         List<IngredientLine> lines = recipe.getIngredients().stream()
             .map(i -> new IngredientLine(i.getId(), i.getPosition(), i.getName(), i.getQuantity(), i.getUnit(),
@@ -173,9 +195,23 @@ public class RecipeService {
             fat = fat.add(scaled(food.fatG(), ratio));
             counted++;
         }
-        Function<BigDecimal, BigDecimal> round = value -> value.setScale(1, RoundingMode.HALF_UP);
-        return new Nutrition(round.apply(kcal), round.apply(protein), round.apply(carbs), round.apply(fat), counted,
+        Macros total = new Macros(kcal, protein, carbs, fat);
+        Integer servings = recipe.getServings();
+        Macros perServing = servings == null || servings < 1 ? null : divide(total, BigDecimal.valueOf(servings));
+        return new Nutrition(round(total), perServing == null ? null : round(perServing), counted,
             recipe.getIngredients().size());
+    }
+
+    private static Macros divide(Macros macros, BigDecimal divisor) {
+        Function<BigDecimal, BigDecimal> div = value -> value.divide(divisor, 6, RoundingMode.HALF_UP);
+        return new Macros(div.apply(macros.energyKcal()), div.apply(macros.proteinG()),
+            div.apply(macros.carbohydrateG()), div.apply(macros.fatG()));
+    }
+
+    private static Macros round(Macros macros) {
+        Function<BigDecimal, BigDecimal> round = value -> value.setScale(1, RoundingMode.HALF_UP);
+        return new Macros(round.apply(macros.energyKcal()), round.apply(macros.proteinG()),
+            round.apply(macros.carbohydrateG()), round.apply(macros.fatG()));
     }
 
     private static BigDecimal scaled(BigDecimal per100g, BigDecimal ratio) {
