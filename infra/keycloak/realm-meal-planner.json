@@ -10,23 +10,60 @@
   "duplicateEmailsAllowed": false,
   "sslRequired": "external",
   "internationalizationEnabled": true,
-  "supportedLocales": ["fr", "en"],
+  "supportedLocales": [
+    "fr",
+    "en"
+  ],
   "defaultLocale": "fr",
   "accessTokenLifespan": 300,
   "ssoSessionIdleTimeout": 1800,
   "ssoSessionMaxLifespan": 36000,
   "roles": {
     "realm": [
-      { "name": "user", "description": "Utilisateur de l'application" },
-      { "name": "admin", "description": "Administrateur (imports de référence, modération)" }
+      {
+        "name": "user",
+        "description": "Utilisateur de l'application",
+        "composite": false,
+        "clientRole": false
+      },
+      {
+        "name": "admin",
+        "description": "Administrateur (imports de référence, modération)",
+        "composite": false,
+        "clientRole": false
+      },
+      {
+        "name": "offline_access",
+        "description": "${role_offline-access}",
+        "composite": false,
+        "clientRole": false
+      },
+      {
+        "name": "uma_authorization",
+        "description": "${role_uma_authorization}",
+        "composite": false,
+        "clientRole": false
+      },
+      {
+        "name": "default-roles-meal-planner",
+        "description": "${role_default-roles}",
+        "composite": true,
+        "composites": {
+          "realm": [
+            "user",
+            "offline_access",
+            "uma_authorization"
+          ]
+        },
+        "clientRole": false
+      }
     ]
   },
   "defaultRole": {
     "name": "default-roles-meal-planner",
+    "description": "${role_default-roles}",
     "composite": true,
-    "composites": {
-      "realm": ["user", "offline_access", "uma_authorization"]
-    }
+    "clientRole": false
   },
   "clients": [
     {
@@ -41,14 +78,27 @@
       "serviceAccountsEnabled": false,
       "rootUrl": "http://localhost:4200",
       "baseUrl": "/",
-      "redirectUris": ["http://localhost:4200/*"],
-      "webOrigins": ["http://localhost:4200"],
+      "redirectUris": [
+        "http://localhost:4200/*"
+      ],
+      "webOrigins": [
+        "http://localhost:4200"
+      ],
       "attributes": {
         "pkce.code.challenge.method": "S256",
         "post.logout.redirect.uris": "http://localhost:4200/*"
       },
-      "defaultClientScopes": ["web-origins", "acr", "profile", "roles", "basic", "email"],
-      "optionalClientScopes": ["offline_access"]
+      "defaultClientScopes": [
+        "web-origins",
+        "acr",
+        "profile",
+        "roles",
+        "basic",
+        "email"
+      ],
+      "optionalClientScopes": [
+        "offline_access"
+      ]
     }
   ],
   "users": [
@@ -59,8 +109,17 @@
       "lastName": "Utilisateur",
       "enabled": true,
       "emailVerified": true,
-      "credentials": [{ "type": "password", "value": "demo", "temporary": false }],
-      "realmRoles": ["default-roles-meal-planner", "user"]
+      "credentials": [
+        {
+          "type": "password",
+          "value": "demo",
+          "temporary": false
+        }
+      ],
+      "realmRoles": [
+        "default-roles-meal-planner",
+        "user"
+      ]
     },
     {
       "username": "admin",
@@ -69,8 +128,18 @@
       "lastName": "Meal Planner",
       "enabled": true,
       "emailVerified": true,
-      "credentials": [{ "type": "password", "value": "admin", "temporary": false }],
-      "realmRoles": ["default-roles-meal-planner", "user", "admin"]
+      "credentials": [
+        {
+          "type": "password",
+          "value": "admin",
+          "temporary": false
+        }
+      ],
+      "realmRoles": [
+        "default-roles-meal-planner",
+        "user",
+        "admin"
+      ]
     }
   ]
 }
