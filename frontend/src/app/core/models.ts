@@ -129,7 +129,45 @@ export interface FoodDetail extends Omit<FoodSummary, 'score'> {
   nutrients: NutrientValue[];
 }
 
-export type ImportStatus = 'PENDING' | 'RUNNING' | 'COMPLETED' | 'COMPLETED_WITH_ERRORS' | 'FAILED';
+/** Ligne du catalogue : catégorie = groupe Ciqual, sous-catégorie = sous-groupe. */
+export interface FoodCatalogItem {
+  id: number;
+  name: string;
+  categoryCode: string | null;
+  categoryName: string | null;
+  subcategoryCode: string | null;
+  subcategoryName: string | null;
+  energyKcal: number | null;
+  proteinG: number | null;
+  carbohydrateG: number | null;
+  fatG: number | null;
+}
+
+/** Critère de tri du catalogue (équivalent camelCase de l'enum Java CatalogSort). */
+export type CatalogSort = 'name' | 'energyKcal' | 'proteinG' | 'carbohydrateG' | 'fatG';
+
+export interface FoodCatalogQuery {
+  q?: string;
+  /** Code de groupe (2 chiffres) ou de sous-groupe (4 chiffres). */
+  group?: string;
+  basic: boolean;
+  sort: CatalogSort;
+  direction: 'asc' | 'desc';
+  page: number;
+  size: number;
+}
+
+export interface FoodSubcategory {
+  code: string;
+  name: string;
+  foodCount: number;
+}
+
+export interface FoodCategory extends FoodSubcategory {
+  subcategories: FoodSubcategory[];
+}
+
+export type ImportStatus ='PENDING' | 'RUNNING' | 'COMPLETED' | 'COMPLETED_WITH_ERRORS' | 'FAILED';
 
 export interface ImportJob {
   id: number;

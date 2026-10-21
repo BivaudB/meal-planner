@@ -86,6 +86,8 @@ export class FoodPicker {
   readonly placeholder = input('Rechercher un aliment (ex. tomate)');
   /** Texte initial du champ. */
   readonly initialText = input('');
+  /** Ne propose que des ingrédients de base (œufs, tomates…), pas de plats préparés. */
+  readonly basicOnly = input(true);
   readonly picked = output<FoodSummary>();
   /** Texte saisi, émis à chaque frappe (utile pour une saisie libre). */
   readonly typed = output<string>();
@@ -100,7 +102,9 @@ export class FoodPicker {
       .pipe(
         debounceTime(250),
         distinctUntilChanged(),
-        switchMap((q) => (q.trim().length < 2 ? of([]) : this.api.searchFoods(q).pipe(catchError(() => of([]))))),
+        switchMap((q) =>
+          q.trim().length < 2 ? of([]) : this.api.searchFoods(q, 15, this.basicOnly()).pipe(catchError(() => of([]))),
+        ),
         takeUntilDestroyed(inject(DestroyRef)),
       )
       .subscribe((foods) => this.results.set(foods));

@@ -50,8 +50,13 @@ export const routes: Routes = [
       },
       {
         path: 'aliments',
-        title: 'Aliments',
+        title: 'Ingrédients',
         loadComponent: () => import('./pages/foods/foods').then((m) => m.FoodsPage),
+      },
+      {
+        path: 'aliments/:id',
+        title: 'Ingrédient',
+        loadComponent: () => import('./pages/foods/food-detail').then((m) => m.FoodDetailPage),
       },
       {
         path: 'admin',

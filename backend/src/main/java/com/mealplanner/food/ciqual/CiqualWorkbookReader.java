@@ -113,7 +113,7 @@ public class CiqualWorkbookReader {
                         values.put(nutrient.id(), value);
                     }
                 });
-                foods.add(new FoodRow(id, name.trim(), blankToNull(text(row, fixedColumns.get("alim_nom_sci"))),
+                foods.add(new FoodRow(id, flatten(name), blankToNull(text(row, fixedColumns.get("alim_nom_sci"))),
                     groupCode, values));
             }
             return new CiqualData(List.copyOf(nutrientByColumn.values()), List.copyOf(groups.values()), foods,
@@ -137,7 +137,7 @@ public class CiqualWorkbookReader {
                 break;
             }
             code = code.trim();
-            groups.putIfAbsent(code, new FoodGroup(code, level + 1, parent, name.trim()));
+            groups.putIfAbsent(code, new FoodGroup(code, level + 1, parent, flatten(name)));
             parent = code;
             deepest = code;
         }
@@ -203,6 +203,6 @@ public class CiqualWorkbookReader {
     }
 
     private static String blankToNull(String value) {
-        return value == null || value.isBlank() ? null : value.trim();
+        return value == null || value.isBlank() ? null : flatten(value);
     }
 }

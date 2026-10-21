@@ -4,6 +4,9 @@ import { Observable } from 'rxjs';
 
 import { environment } from '../../environments/environment';
 import {
+  FoodCatalogItem,
+  FoodCatalogQuery,
+  FoodCategory,
   FoodDetail,
   FoodSummary,
   ImportJob,
@@ -52,8 +55,29 @@ export class ApiService {
   }
 
   // --- Référentiel d'aliments (Ciqual) -------------------------------
-  searchFoods(q: string, limit = 15): Observable<FoodSummary[]> {
-    return this.http.get<FoodSummary[]>(`${this.base}/foods`, { params: { q, limit } });
+  /** @param basic ingrédients de base uniquement (exclut plats, sauces, gâteaux…) */
+  searchFoods(q: string, limit = 15, basic = false): Observable<FoodSummary[]> {
+    return this.http.get<FoodSummary[]>(`${this.base}/foods`, { params: { q, limit, basic } });
+  }
+
+  foodCatalog(query: FoodCatalogQuery): Observable<Page<FoodCatalogItem>> {
+    let params = new HttpParams()
+      .set('basic', query.basic)
+      .set('sort', query.sort)
+      .set('direction', query.direction)
+      .set('page', query.page)
+      .set('size', query.size);
+    if (query.q?.trim()) {
+      params = params.set('q', query.q.trim());
+    }
+    if (query.group) {
+      params = params.set('group', query.group);
+    }
+    return this.http.get<Page<FoodCatalogItem>>(`${this.base}/foods/catalog`, { params });
+  }
+
+  foodCategories(basic: boolean): Observable<FoodCategory[]> {
+    return this.http.get<FoodCategory[]>(`${this.base}/foods/categories`, { params: { basic } });
   }
 
   food(id: number): Observable<FoodDetail> {

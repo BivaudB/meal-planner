@@ -21,7 +21,7 @@ import { CurrentUserStore } from './core/current-user.store';
             <a routerLink="/garde-manger" routerLinkActive="active">Mes ingrédients</a>
             <a routerLink="/suggestions" routerLinkActive="active">Suggestions</a>
             <a routerLink="/import" routerLinkActive="active">Import</a>
-            <a routerLink="/aliments" routerLinkActive="active">Aliments</a>
+            <a routerLink="/aliments" routerLinkActive="active">Ingrédients</a>
             @if (user.isAdmin()) {
               <a routerLink="/admin" routerLinkActive="active">Admin</a>
             }
