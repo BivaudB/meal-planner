@@ -36,7 +36,7 @@ public class FoodRepository {
      * ("Tomate, crue" passe avant "Sauce tomate aux oignons, préemballée").
      */
     private static final String SEARCH_SQL = """
-        SELECT f.id, f.name, g.name AS group_name, f.energy_kcal, f.protein_g, f.carbohydrate_g, f.fat_g,
+        SELECT f.id, /*name*/ AS name, g.name AS group_name, f.energy_kcal, f.protein_g, f.carbohydrate_g, f.fat_g,
                word_similarity(f_normalize(:q), f_normalize(f.name)) AS score
         FROM food f
         LEFT JOIN food_group g ON g.code = f.group_code
@@ -61,7 +61,8 @@ public class FoodRepository {
 
     /** @param basicOnly limite aux ingrédients de base (voir {@link BasicIngredients}) */
     public List<FoodSummary> search(String query, int limit, boolean basicOnly) {
-        return jdbc.sql(SEARCH_SQL.replace("/*filter*/", basicOnly ? "AND " + BasicIngredients.SQL_PREDICATE : ""))
+        return jdbc.sql(SEARCH_SQL.replace("/*name*/", nameColumn(basicOnly))
+                .replace("/*filter*/", basicOnly ? "AND " + BasicIngredients.SQL_PREDICATE : ""))
             .param("q", query)
             .param("limit", limit)
             .query((rs, i) -> new FoodSummary(
@@ -178,13 +179,13 @@ public class FoodRepository {
         };
         String direction = descending ? "DESC" : "ASC";
         List<FoodCatalogItem> content = jdbc.sql("""
-                SELECT f.id, f.name, c.code AS category_code, c.name AS category_name,
+                SELECT f.id, /*name*/ AS name, c.code AS category_code, c.name AS category_name,
                        s.code AS subcategory_code, s.name AS subcategory_name,
                        f.energy_kcal, f.protein_g, f.carbohydrate_g, f.fat_g
                 FROM food f
                 LEFT JOIN food_group c ON c.code = left(f.group_code, 2)
                 LEFT JOIN food_group s ON s.code = left(f.group_code, 4) AND length(f.group_code) >= 4
-                """ + where + " ORDER BY " + column + " " + direction + " NULLS LAST, f_normalize(f.name), f.id"
+                """.replace("/*name*/", nameColumn(basicOnly)) + where + " ORDER BY " + column + " " + direction + " NULLS LAST, f_normalize(f.name), f.id"
                 + " LIMIT :limit OFFSET :offset")
             .params(params)
             .param("limit", size)
@@ -235,6 +236,11 @@ public class FoodRepository {
                     .map(row -> new FoodSubcategory(row.subCode(), row.subName(), row.count()))
                     .toList()))
             .toList();
+    }
+
+    /** Parmi les ingrédients de base, la mention « cru » est implicite : on la retire du nom. */
+    private static String nameColumn(boolean basicOnly) {
+        return basicOnly ? BasicIngredients.SQL_DISPLAY_NAME : "f.name";
     }
 
     public boolean exists(long id) {
