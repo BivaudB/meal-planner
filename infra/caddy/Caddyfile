@@ -1,0 +1,48 @@
+# Point d'entrée unique de la production (service "web" de docker-compose.prod.yml).
+# SITE_ADDRESS = nom de domaine (ex. mon-repas.duckdns.org) : Caddy obtient et renouvelle
+# seul le certificat HTTPS (Let's Encrypt). Ports 80 et 443 ouverts sur la VM.
+{
+	email {$ACME_EMAIL}
+}
+
+{$SITE_ADDRESS} {
+	encode zstd gzip
+
+	header {
+		Strict-Transport-Security "max-age=31536000"
+		X-Content-Type-Options "nosniff"
+		Referrer-Policy "strict-origin-when-cross-origin"
+		X-Frame-Options "SAMEORIGIN"
+		-Server
+	}
+
+	# API Spring Boot. Actuator n'est pas exposé publiquement.
+	handle /api/* {
+		reverse_proxy backend:8080
+	}
+	handle /actuator* {
+		respond 404
+	}
+
+	# Keycloak (KC_HTTP_RELATIVE_PATH=/auth). La console d'administration n'est pas publiée :
+	# on y accède par un tunnel SSH (voir docs/deploiement.md).
+	handle /auth/admin* {
+		respond 404
+	}
+	handle /auth/* {
+		reverse_proxy keycloak:8080
+	}
+
+	# Front Angular : routes gérées côté client, repli sur index.html
+	handle {
+		root * /srv
+		# Fichiers à empreinte (outputHashing) : jamais modifiés, donc cachables longtemps
+		@immutable path_regexp -[0-9A-Za-z_-]{8}\.(js|css)$
+		header @immutable Cache-Control "public, max-age=31536000, immutable"
+		# Le reste (index.html, servi pour toutes les routes) est revalidé à chaque visite
+		@revalidate not path_regexp -[0-9A-Za-z_-]{8}\.(js|css)$
+		header @revalidate Cache-Control "no-cache"
+		try_files {path} /index.html
+		file_server
+	}
+}

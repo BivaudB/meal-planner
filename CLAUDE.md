@@ -24,6 +24,11 @@ cd frontend && npx ng build          # vérification de compilation du front
 
 Après toute modification, vérifier au minimum `mvn verify` (backend) et `npx ng build` (frontend).
 
+**Production** : `docker-compose.prod.yml` + `.env.prod` (modèle `.env.prod.example`), Caddy
+(`infra/caddy/Caddyfile`) devant le front, `/api` et Keycloak sous `/auth`. Profil Spring `prod`
+(`application-prod.yml`). Toute nouvelle valeur propre au déploiement passe par une variable
+d'environnement, jamais en dur. Procédure : `docs/deploiement.md`.
+
 ## Conventions backend
 
 - **Spring Boot 4** : starters `spring-boot-starter-webmvc`, `spring-boot-starter-flyway`,

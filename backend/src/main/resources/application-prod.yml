@@ -1,0 +1,22 @@
+# Profil "prod" (SPRING_PROFILES_ACTIVE=prod), utilisé par docker-compose.prod.yml.
+# Le backend tourne derrière Caddy, sur le même domaine que le front et Keycloak.
+spring:
+  security:
+    oauth2:
+      resourceserver:
+        jwt:
+          # issuer-uri (OAUTH2_ISSUER_URI) reste l'URL publique : c'est la valeur du claim "iss"
+          # des jetons. Les clés de signature sont lues sur le réseau Docker interne, sans
+          # repasser par Internet : avec jwk-set-uri, issuer-uri ne sert plus qu'à la validation.
+          jwk-set-uri: ${OAUTH2_JWK_SET_URI}
+
+server:
+  # En-têtes X-Forwarded-* posés par Caddy (schéma https, hôte public)
+  forward-headers-strategy: framework
+  shutdown: graceful
+
+management:
+  endpoint:
+    health:
+      probes:
+        enabled: true

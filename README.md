@@ -132,13 +132,26 @@ meal-planner/
 | GET     | `/api/recipes/public`          | Recettes partagées                            |
 | GET     | `/api/recipes/{id}`            | Détail + valeurs nutritionnelles              |
 | POST/PUT/DELETE | `/api/recipes[/{id}]`  | Création, modification, suppression           |
-| GET     | `/api/foods?q=`                | Recherche d'aliments Ciqual                   |
+| GET     | `/api/foods?q=`                | Recherche d'aliments Ciqual (`basic` : ingrédients crus de base) |
+| GET     | `/api/foods/catalog`           | Catalogue paginé (`q`, `group`, `basic`, `sort`, `direction`) |
+| GET     | `/api/foods/categories`        | Groupes et sous-groupes Ciqual (`basic`)      |
 | GET     | `/api/foods/{id}`              | Composition détaillée d'un aliment            |
 | POST    | `/api/imports/recipes`         | Import d'un fichier (multipart `file`)        |
 | GET     | `/api/imports[/{id}]`          | Suivi des imports                             |
 | GET/POST/DELETE | `/api/pantry[/{id}]`   | Garde-manger                                  |
 | GET     | `/api/recommendations`         | Suggestions (`maxMissing`, `limit`)           |
 | POST    | `/api/admin/imports/ciqual`    | Chargement Ciqual (rôle admin)                |
+
+## Déploiement
+
+`docker-compose.prod.yml` lance toute l'application sur un seul serveur, derrière Caddy
+(HTTPS automatique, un seul domaine : `/`, `/api`, `/auth`). Procédure complète pour une VM
+gratuite Oracle Cloud : [docs/deploiement.md](docs/deploiement.md).
+
+```bash
+cp .env.prod.example .env.prod   # domaine, mots de passe
+docker compose -f docker-compose.prod.yml --env-file .env.prod up -d --build
+```
 
 ## Feuille de route
 

@@ -1,0 +1,131 @@
+# Production sur un seul serveur (ex. VM Oracle Cloud Always Free) : voir docs/deploiement.md.
+#   cp .env.prod.example .env.prod   # puis renseigner les valeurs
+#   docker compose -f docker-compose.prod.yml --env-file .env.prod up -d --build
+#
+# Seul Caddy (service "web") est exposé sur Internet, en 80/443, sous un domaine unique :
+#   https://<domaine>/        front Angular
+#   https://<domaine>/api/    backend Spring Boot
+#   https://<domaine>/auth/   Keycloak (console d'administration fermée, accès par tunnel SSH)
+name: meal-planner-prod
+
+x-restart: &restart
+  restart: unless-stopped
+
+services:
+  postgres:
+    <<: *restart
+    image: postgres:18
+    environment:
+      POSTGRES_DB: ${DB_NAME:-meal_planner}
+      POSTGRES_USER: ${DB_USER:-meal_planner}
+      POSTGRES_PASSWORD: ${DB_PASSWORD:?DB_PASSWORD manquant dans .env.prod}
+      KEYCLOAK_DB_PASSWORD: ${KEYCLOAK_DB_PASSWORD:?KEYCLOAK_DB_PASSWORD manquant dans .env.prod}
+    volumes:
+      - postgres-data:/var/lib/postgresql
+      - ./infra/postgres/init-prod:/docker-entrypoint-initdb.d:ro
+    # Accessible uniquement depuis la VM (tunnel SSH pour un client SQL)
+    ports:
+      - "127.0.0.1:${DB_ADMIN_PORT:-5432}:5432"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U $${POSTGRES_USER} -d $${POSTGRES_DB}"]
+      interval: 5s
+      timeout: 5s
+      retries: 20
+
+  # Téléchargement unique de la table Ciqual dans le volume ciqual-data (importée par le
+  # backend à son premier démarrage, quand la table des aliments est vide).
+  ciqual-download:
+    image: curlimages/curl:8.17.0
+    restart: "no"
+    user: root
+    environment:
+      CIQUAL_URL: ${CIQUAL_URL:-https://entrepot.recherche.data.gouv.fr/api/access/datafile/666260}
+    entrypoint: ["/bin/sh", "-c"]
+    command:
+      - |
+        if [ -s /data/ciqual.xlsx ]; then
+          echo "Ciqual déjà présent : /data/ciqual.xlsx"
+        else
+          echo "Téléchargement de Ciqual depuis $$CIQUAL_URL"
+          curl -fSL --retry 3 -o /data/ciqual.xlsx.part "$$CIQUAL_URL" && mv /data/ciqual.xlsx.part /data/ciqual.xlsx
+        fi
+    volumes:
+      - ciqual-data:/data
+
+  keycloak:
+    <<: *restart
+    image: quay.io/keycloak/keycloak:26.8
+    command: ["start", "--import-realm"]
+    environment:
+      KC_BOOTSTRAP_ADMIN_USERNAME: ${KEYCLOAK_ADMIN:-admin}
+      KC_BOOTSTRAP_ADMIN_PASSWORD: ${KEYCLOAK_ADMIN_PASSWORD:?KEYCLOAK_ADMIN_PASSWORD manquant dans .env.prod}
+      KC_DB: postgres
+      KC_DB_URL: jdbc:postgresql://postgres:5432/keycloak
+      KC_DB_USERNAME: keycloak
+      KC_DB_PASSWORD: ${KEYCLOAK_DB_PASSWORD}
+      # Derrière Caddy : HTTP en interne, URL publique en https://<domaine>/auth
+      KC_HTTP_ENABLED: "true"
+      KC_HTTP_PORT: 8080
+      KC_HTTP_RELATIVE_PATH: /auth
+      KC_PROXY_HEADERS: xforwarded
+      KC_HOSTNAME: ${APP_URL:?APP_URL manquant dans .env.prod}/auth
+      # Console d'administration : uniquement par tunnel SSH sur le port ci-dessous
+      KC_HOSTNAME_ADMIN: http://localhost:${KEYCLOAK_ADMIN_PORT:-8180}/auth
+      KC_HEALTH_ENABLED: "true"
+      # Valeurs injectées dans le realm importé (infra/keycloak/realm-meal-planner.json)
+      APP_URL: ${APP_URL}
+      KC_DEMO_PASSWORD: ${KC_DEMO_PASSWORD:?KC_DEMO_PASSWORD manquant dans .env.prod}
+      KC_APP_ADMIN_PASSWORD: ${KC_APP_ADMIN_PASSWORD:?KC_APP_ADMIN_PASSWORD manquant dans .env.prod}
+    ports:
+      - "127.0.0.1:${KEYCLOAK_ADMIN_PORT:-8180}:8080"
+    volumes:
+      - ./infra/keycloak/realm-meal-planner.json:/opt/keycloak/data/import/realm-meal-planner.json:ro
+    depends_on:
+      postgres:
+        condition: service_healthy
+
+  backend:
+    <<: *restart
+    build: ./backend
+    environment:
+      SPRING_PROFILES_ACTIVE: prod
+      DB_URL: jdbc:postgresql://postgres:5432/${DB_NAME:-meal_planner}
+      DB_USER: ${DB_USER:-meal_planner}
+      DB_PASSWORD: ${DB_PASSWORD}
+      # "iss" des jetons = URL publique ; clés lues en interne (voir application-prod.yml)
+      OAUTH2_ISSUER_URI: ${APP_URL}/auth/realms/meal-planner
+      OAUTH2_JWK_SET_URI: http://keycloak:8080/auth/realms/meal-planner/protocol/openid-connect/certs
+      APP_CORS_ALLOWED_ORIGINS: ${APP_URL}
+      CIQUAL_IMPORT_PATH: /data/ciqual.xlsx
+      RECIPE_CATALOG_ENABLED: ${RECIPE_CATALOG_ENABLED:-true}
+    volumes:
+      - ciqual-data:/data:ro
+    depends_on:
+      postgres:
+        condition: service_healthy
+      ciqual-download:
+        condition: service_completed_successfully
+
+  web:
+    <<: *restart
+    build: ./frontend
+    environment:
+      SITE_ADDRESS: ${SITE_ADDRESS:?SITE_ADDRESS manquant dans .env.prod}
+      ACME_EMAIL: ${ACME_EMAIL:?ACME_EMAIL manquant dans .env.prod}
+    ports:
+      - "${HTTP_PORT:-80}:80"
+      - "${HTTPS_PORT:-443}:443"
+      - "${HTTPS_PORT:-443}:443/udp"
+    volumes:
+      - ./infra/caddy/Caddyfile:/etc/caddy/Caddyfile:ro
+      - caddy-data:/data
+      - caddy-config:/config
+    depends_on:
+      - backend
+      - keycloak
+
+volumes:
+  postgres-data:
+  ciqual-data:
+  caddy-data:
+  caddy-config:

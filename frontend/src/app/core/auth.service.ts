@@ -31,7 +31,7 @@ export class AuthService {
       redirectUri: window.location.origin + '/',
       postLogoutRedirectUri: window.location.origin + '/',
       scope: 'openid profile email',
-      requireHttps: false, // développement local uniquement
+      requireHttps: 'remoteOnly', // HTTP toléré sur localhost (développement), HTTPS exigé ailleurs
       showDebugInformation: false,
     });
     this.oauth.events.subscribe(() => this.refreshState());
