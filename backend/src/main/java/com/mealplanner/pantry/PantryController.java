@@ -19,7 +19,7 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.mealplanner.common.NotFoundException;
-import com.mealplanner.food.FoodRepository;
+import com.mealplanner.food.FoodService;
 import com.mealplanner.recipe.IngredientMatcher;
 import com.mealplanner.user.CurrentUserService;
 
@@ -29,11 +29,11 @@ import com.mealplanner.user.CurrentUserService;
 public class PantryController {
 
     private final PantryItemRepository items;
-    private final FoodRepository foods;
+    private final FoodService foods;
     private final IngredientMatcher matcher;
     private final CurrentUserService currentUser;
 
-    public PantryController(PantryItemRepository items, FoodRepository foods, IngredientMatcher matcher,
+    public PantryController(PantryItemRepository items, FoodService foods, IngredientMatcher matcher,
                             CurrentUserService currentUser) {
         this.items = items;
         this.foods = foods;

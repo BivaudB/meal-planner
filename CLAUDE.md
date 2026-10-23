@@ -41,8 +41,13 @@ d'environnement, jamais en dur. Procédure : `docs/deploiement.md`.
   bidirectionnelles inutiles (les liens vers `app_user` sont des `Long ownerId/userId`).
 - DTO = `record` Java, regroupés dans un fichier `XxxDtos.java` par domaine. Les entités ne
   sortent jamais des services.
-- Requêtes de recherche/agrégation en SQL via `JdbcClient` (pg_trgm, `f_normalize()`),
-  le CRUD via Spring Data JPA.
+- Accès aux données par Spring Data JPA (entités Hibernate, conversion en DTO dans les
+  services). Requête fixe : `@Query` dans le repository, JPQL par défaut, SQL natif
+  (`nativeQuery = true`) si elle a besoin de PostgreSQL (pg_trgm, `f_normalize()`), résultat
+  dans une projection (interface). Filtres facultatifs ou tri au choix : `Specification`
+  (`JpaSpecificationExecutor`), valeurs saisies toujours en paramètres liés.
+- Tables du référentiel Ciqual (`Food`, `FoodGroup`, `Nutrient`, `FoodNutrient`) : entités
+  `@Immutable`, alimentées uniquement par l'import (insertions par lots en `JdbcTemplate`).
 - Utilisateur courant : `CurrentUserService.currentUserId()`. Toujours vérifier la propriété
   d'une ressource avant modification (`ForbiddenException` / `NotFoundException`).
 - Erreurs : exceptions de `common/`, converties en Problem Details par `ApiExceptionHandler`.

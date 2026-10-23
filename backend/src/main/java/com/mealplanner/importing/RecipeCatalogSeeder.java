@@ -17,7 +17,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.transaction.support.TransactionTemplate;
 
 import com.mealplanner.config.AppProperties;
-import com.mealplanner.food.FoodRepository;
+import com.mealplanner.food.FoodService;
 import com.mealplanner.importing.parser.QuantityParser;
 import com.mealplanner.importing.parser.QuantityParser.ParsedQuantity;
 import com.mealplanner.recipe.IngredientMatcher;
@@ -52,13 +52,13 @@ public class RecipeCatalogSeeder implements ApplicationRunner {
 
     private final AppProperties properties;
     private final JdbcClient jdbc;
-    private final FoodRepository foods;
+    private final FoodService foods;
     private final RecipeRepository recipes;
     private final IngredientMatcher matcher;
     private final TransactionTemplate transaction;
     private final ObjectMapper json;
 
-    public RecipeCatalogSeeder(AppProperties properties, JdbcClient jdbc, FoodRepository foods,
+    public RecipeCatalogSeeder(AppProperties properties, JdbcClient jdbc, FoodService foods,
                                RecipeRepository recipes, IngredientMatcher matcher,
                                TransactionTemplate transaction, ObjectMapper json) {
         this.properties = properties;

@@ -21,7 +21,7 @@ import com.mealplanner.common.ForbiddenException;
 import com.mealplanner.common.NotFoundException;
 import com.mealplanner.common.PageResponse;
 import com.mealplanner.food.FoodDtos.FoodSummary;
-import com.mealplanner.food.FoodRepository;
+import com.mealplanner.food.FoodService;
 import com.mealplanner.recipe.RecipeDtos.IngredientLine;
 import com.mealplanner.recipe.RecipeDtos.IngredientRequest;
 import com.mealplanner.recipe.RecipeDtos.Macros;
@@ -36,10 +36,10 @@ public class RecipeService {
     private static final BigDecimal HUNDRED = new BigDecimal("100");
 
     private final RecipeRepository recipes;
-    private final FoodRepository foods;
+    private final FoodService foods;
     private final IngredientMatcher matcher;
 
-    public RecipeService(RecipeRepository recipes, FoodRepository foods, IngredientMatcher matcher) {
+    public RecipeService(RecipeRepository recipes, FoodService foods, IngredientMatcher matcher) {
         this.recipes = recipes;
         this.foods = foods;
         this.matcher = matcher;

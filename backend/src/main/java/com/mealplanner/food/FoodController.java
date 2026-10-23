@@ -21,10 +21,10 @@ import com.mealplanner.food.FoodDtos.FoodSummary;
 @RequestMapping("/api/foods")
 public class FoodController {
 
-    private final FoodRepository repository;
+    private final FoodService foods;
 
-    public FoodController(FoodRepository repository) {
-        this.repository = repository;
+    public FoodController(FoodService foods) {
+        this.foods = foods;
     }
 
     /** Recherche approximative. */
@@ -34,7 +34,7 @@ public class FoodController {
         if (query.isBlank()) {
             return List.of();
         }
-        return repository.search(query.trim(), Math.clamp(limit, 1, 100));
+        return foods.search(query.trim(), Math.clamp(limit, 1, 100));
     }
 
     /**
@@ -51,18 +51,18 @@ public class FoodController {
         if (group != null && !group.isBlank() && !group.matches("\\d{2}|\\d{4}")) {
             throw new IllegalArgumentException("Code de catégorie invalide : " + group);
         }
-        return repository.catalog(query, group, parseSort(sort), "desc".equalsIgnoreCase(direction),
+        return foods.catalog(query, group, parseSort(sort), "desc".equalsIgnoreCase(direction),
             Math.max(page, 0), Math.clamp(size, 1, 200));
     }
 
     @GetMapping("/categories")
     public List<FoodCategory> categories() {
-        return repository.categories();
+        return foods.categories();
     }
 
     @GetMapping("/{id}")
     public FoodDetail get(@PathVariable long id) {
-        return repository.findDetail(id)
+        return foods.findDetail(id)
             .orElseThrow(() -> new NotFoundException("Aliment introuvable : " + id));
     }
 

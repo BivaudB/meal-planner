@@ -15,7 +15,7 @@ import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
 
 import com.mealplanner.config.AppProperties;
-import com.mealplanner.food.FoodRepository;
+import com.mealplanner.food.FoodService;
 
 /**
  * Au démarrage : si la table des aliments est vide et qu'un fichier Ciqual est disponible
@@ -29,10 +29,10 @@ public class CiqualStartupImport implements ApplicationRunner {
     private static final Logger log = LoggerFactory.getLogger(CiqualStartupImport.class);
 
     private final AppProperties properties;
-    private final FoodRepository foods;
+    private final FoodService foods;
     private final CiqualImportService importService;
 
-    public CiqualStartupImport(AppProperties properties, FoodRepository foods, CiqualImportService importService) {
+    public CiqualStartupImport(AppProperties properties, FoodService foods, CiqualImportService importService) {
         this.properties = properties;
         this.foods = foods;
         this.importService = importService;

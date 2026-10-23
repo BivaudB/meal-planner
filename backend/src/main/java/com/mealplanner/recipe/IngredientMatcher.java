@@ -8,7 +8,7 @@ import org.springframework.stereotype.Component;
 
 import com.mealplanner.config.AppProperties;
 import com.mealplanner.food.FoodDtos.FoodSummary;
-import com.mealplanner.food.FoodRepository;
+import com.mealplanner.food.FoodService;
 
 /**
  * Rattache un nom d'ingrédient libre ("tomates", "Farine T55") à un aliment Ciqual
@@ -17,10 +17,10 @@ import com.mealplanner.food.FoodRepository;
 @Component
 public class IngredientMatcher {
 
-    private final FoodRepository foods;
+    private final FoodService foods;
     private final double threshold;
 
-    public IngredientMatcher(FoodRepository foods, AppProperties properties) {
+    public IngredientMatcher(FoodService foods, AppProperties properties) {
         this.foods = foods;
         this.threshold = properties.importing().matchThreshold();
     }
