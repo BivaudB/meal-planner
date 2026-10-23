@@ -13,6 +13,7 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.support.TransactionTemplate;
 
+import com.mealplanner.food.BasicIngredients;
 import com.mealplanner.food.ciqual.CiqualValueParser.ParsedValue;
 import com.mealplanner.food.ciqual.CiqualWorkbookReader.CiqualData;
 import com.mealplanner.food.ciqual.CiqualWorkbookReader.FoodGroup;
@@ -22,9 +23,10 @@ import com.mealplanner.importing.ImportJob;
 import com.mealplanner.importing.ImportJobRepository;
 
 /**
- * Charge (ou recharge) le référentiel Ciqual en base. L'import est idempotent :
- * les aliments existants sont mis à jour, leurs valeurs nutritionnelles remplacées.
- * Environ 3 500 aliments x 75 nutriments : quelques secondes en insertions par lots.
+ * Charge (ou recharge) le référentiel Ciqual en base. Seuls les ingrédients de base sont gardés
+ * (voir {@link BasicIngredients}) : plats composés, desserts, boissons… ne servent pas à cuisiner.
+ * L'import est idempotent : les aliments existants sont mis à jour, leurs valeurs nutritionnelles
+ * remplacées. Quelques secondes en insertions par lots.
  */
 @Service
 public class CiqualImportService {
@@ -59,12 +61,18 @@ public class CiqualImportService {
         job.start();
         job = jobs.save(job);
         try {
-            CiqualData data = new CiqualWorkbookReader().read(input);
+            CiqualData read = new CiqualWorkbookReader().read(input);
+            CiqualData data = basicIngredientsOnly(read);
             transaction.executeWithoutResult(status -> write(data));
-            String report = data.warnings().isEmpty() ? null : String.join("\n", data.warnings());
-            job.finish(data.foods().size(), data.foods().size(), 0, report);
-            log.info("Import Ciqual terminé : {} aliments, {} nutriments, {} groupes",
-                data.foods().size(), data.nutrients().size(), data.groups().size());
+            List<String> warnings = new ArrayList<>(data.warnings());
+            int skipped = read.foods().size() - data.foods().size();
+            if (skipped > 0) {
+                warnings.add(skipped + " aliments ignorés (plats, desserts, boissons, produits cuits…)");
+            }
+            job.finish(read.foods().size(), data.foods().size(), 0,
+                warnings.isEmpty() ? null : String.join("\n", warnings));
+            log.info("Import Ciqual terminé : {} ingrédients ({} aliments ignorés), {} nutriments, {} groupes",
+                data.foods().size(), skipped, data.nutrients().size(), data.groups().size());
         } catch (IOException | RuntimeException e) {
             log.error("Échec de l'import Ciqual", e);
             job.fail(e.getMessage());
@@ -145,6 +153,16 @@ public class CiqualImportService {
                 ps.setString(4, v.value().qualifier());
                 ps.setString(5, truncate(v.value().raw(), 50));
             });
+    }
+
+    /** Ne garde que les ingrédients de base, sous leur nom sans la mention « cru ». */
+    static CiqualData basicIngredientsOnly(CiqualData data) {
+        List<FoodRow> foods = data.foods().stream()
+            .filter(f -> BasicIngredients.isBasicIngredient(f.groupCode(), f.name()))
+            .map(f -> new FoodRow(f.id(), BasicIngredients.displayName(f.name()), f.scientificName(),
+                f.groupCode(), f.nutrients()))
+            .toList();
+        return new CiqualData(data.nutrients(), data.groups(), foods, data.warnings());
     }
 
     private static List<FoodGroup> sortedByLevel(List<FoodGroup> groups) {

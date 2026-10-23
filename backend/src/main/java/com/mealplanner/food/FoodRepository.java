@@ -23,7 +23,7 @@ import com.mealplanner.food.FoodDtos.FoodSummary;
 import com.mealplanner.food.FoodDtos.NutrientValue;
 
 /**
- * Accès en lecture au référentiel Ciqual. En SQL direct (JdbcClient) car les requêtes
+ * Accès en lecture au référentiel Ciqual (ingrédients de base uniquement, voir l'import). En SQL direct (JdbcClient) car les requêtes
  * s'appuient sur la recherche approximative de PostgreSQL (pg_trgm).
  */
 @Repository
@@ -33,16 +33,15 @@ public class FoodRepository {
      * Recherche approximative, insensible à la casse et aux accents.
      * word_similarity mesure si le texte recherché apparaît (même partiellement) dans le nom.
      * Départage : noms qui commencent par la recherche, puis noms les plus courts
-     * ("Tomate, crue" passe avant "Sauce tomate aux oignons, préemballée").
+     * ("Tomate" passe avant "Tomate cerise").
      */
     private static final String SEARCH_SQL = """
-        SELECT f.id, /*name*/ AS name, g.name AS group_name, f.energy_kcal, f.protein_g, f.carbohydrate_g, f.fat_g,
+        SELECT f.id, f.name, g.name AS group_name, f.energy_kcal, f.protein_g, f.carbohydrate_g, f.fat_g,
                word_similarity(f_normalize(:q), f_normalize(f.name)) AS score
         FROM food f
         LEFT JOIN food_group g ON g.code = f.group_code
         WHERE (f_normalize(f.name) %> f_normalize(:q)
            OR f_normalize(f.name) LIKE '%' || f_normalize(:q) || '%')
-          /*filter*/
         ORDER BY score DESC,
                  (f_normalize(f.name) LIKE f_normalize(:q) || '%') DESC,
                  length(f.name) ASC
@@ -56,13 +55,7 @@ public class FoodRepository {
     }
 
     public List<FoodSummary> search(String query, int limit) {
-        return search(query, limit, false);
-    }
-
-    /** @param basicOnly limite aux ingrédients de base (voir {@link BasicIngredients}) */
-    public List<FoodSummary> search(String query, int limit, boolean basicOnly) {
-        return jdbc.sql(SEARCH_SQL.replace("/*name*/", nameColumn(basicOnly))
-                .replace("/*filter*/", basicOnly ? "AND " + BasicIngredients.SQL_PREDICATE : ""))
+        return jdbc.sql(SEARCH_SQL)
             .param("q", query)
             .param("limit", limit)
             .query((rs, i) -> new FoodSummary(
@@ -150,8 +143,7 @@ public class FoodRepository {
      * 2 ou 4 chiffres, les codes Ciqual étant hiérarchiques), trié sur une valeur pour 100 g.
      * Les aliments sans valeur pour le critère de tri passent en dernier.
      */
-    public PageResponse<FoodCatalogItem> catalog(String query, String groupCode, boolean basicOnly,
-                                                 CatalogSort sort, boolean descending, int page, int size) {
+    public PageResponse<FoodCatalogItem> catalog(String query, String groupCode, CatalogSort sort, boolean descending, int page, int size) {
         StringBuilder where = new StringBuilder("WHERE TRUE");
         Map<String, Object> params = new HashMap<>();
         if (query != null && !query.isBlank()) {
@@ -161,9 +153,6 @@ public class FoodRepository {
         if (groupCode != null && !groupCode.isBlank()) {
             where.append(" AND f.group_code LIKE :group || '%'");
             params.put("group", groupCode.trim());
-        }
-        if (basicOnly) {
-            where.append(" AND ").append(BasicIngredients.SQL_PREDICATE);
         }
 
         long total = jdbc.sql("SELECT count(*) FROM food f " + where)
@@ -179,13 +168,13 @@ public class FoodRepository {
         };
         String direction = descending ? "DESC" : "ASC";
         List<FoodCatalogItem> content = jdbc.sql("""
-                SELECT f.id, /*name*/ AS name, c.code AS category_code, c.name AS category_name,
+                SELECT f.id, f.name, c.code AS category_code, c.name AS category_name,
                        s.code AS subcategory_code, s.name AS subcategory_name,
                        f.energy_kcal, f.protein_g, f.carbohydrate_g, f.fat_g
                 FROM food f
                 LEFT JOIN food_group c ON c.code = left(f.group_code, 2)
                 LEFT JOIN food_group s ON s.code = left(f.group_code, 4) AND length(f.group_code) >= 4
-                """.replace("/*name*/", nameColumn(basicOnly)) + where + " ORDER BY " + column + " " + direction + " NULLS LAST, f_normalize(f.name), f.id"
+                """ + where + " ORDER BY " + column + " " + direction + " NULLS LAST, f_normalize(f.name), f.id"
                 + " LIMIT :limit OFFSET :offset")
             .params(params)
             .param("limit", size)
@@ -206,8 +195,8 @@ public class FoodRepository {
         return new PageResponse<>(content, page, size, total, totalPages);
     }
 
-    /** Groupes et sous-groupes Ciqual qui contiennent au moins un aliment (du périmètre demandé). */
-    public List<FoodCategory> categories(boolean basicOnly) {
+    /** Groupes et sous-groupes Ciqual qui contiennent au moins un aliment. */
+    public List<FoodCategory> categories() {
         record Row(String code, String name, String subCode, String subName, long count) {
         }
         List<Row> rows = jdbc.sql("""
@@ -215,8 +204,6 @@ public class FoodRepository {
                 FROM food f
                 JOIN food_group c ON c.code = left(f.group_code, 2)
                 LEFT JOIN food_group s ON s.code = left(f.group_code, 4) AND length(f.group_code) >= 4
-                """ + (basicOnly ? "WHERE " + BasicIngredients.SQL_PREDICATE : "") + """
-
                 GROUP BY c.code, c.name, s.code, s.name
                 ORDER BY c.code, s.code NULLS FIRST
                 """)
@@ -236,11 +223,6 @@ public class FoodRepository {
                     .map(row -> new FoodSubcategory(row.subCode(), row.subName(), row.count()))
                     .toList()))
             .toList();
-    }
-
-    /** Parmi les ingrédients de base, la mention « cru » est implicite : on la retire du nom. */
-    private static String nameColumn(boolean basicOnly) {
-        return basicOnly ? BasicIngredients.SQL_DISPLAY_NAME : "f.name";
     }
 
     public boolean exists(long id) {

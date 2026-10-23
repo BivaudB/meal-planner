@@ -55,14 +55,12 @@ export class ApiService {
   }
 
   // --- Référentiel d'aliments (Ciqual) -------------------------------
-  /** @param basic ingrédients de base uniquement (exclut plats, sauces, gâteaux…) */
-  searchFoods(q: string, limit = 15, basic = false): Observable<FoodSummary[]> {
-    return this.http.get<FoodSummary[]>(`${this.base}/foods`, { params: { q, limit, basic } });
+  searchFoods(q: string, limit = 15): Observable<FoodSummary[]> {
+    return this.http.get<FoodSummary[]>(`${this.base}/foods`, { params: { q, limit } });
   }
 
   foodCatalog(query: FoodCatalogQuery): Observable<Page<FoodCatalogItem>> {
     let params = new HttpParams()
-      .set('basic', query.basic)
       .set('sort', query.sort)
       .set('direction', query.direction)
       .set('page', query.page)
@@ -76,8 +74,8 @@ export class ApiService {
     return this.http.get<Page<FoodCatalogItem>>(`${this.base}/foods/catalog`, { params });
   }
 
-  foodCategories(basic: boolean): Observable<FoodCategory[]> {
-    return this.http.get<FoodCategory[]>(`${this.base}/foods/categories`, { params: { basic } });
+  foodCategories(): Observable<FoodCategory[]> {
+    return this.http.get<FoodCategory[]>(`${this.base}/foods/categories`);
   }
 
   food(id: number): Observable<FoodDetail> {

@@ -27,15 +27,14 @@ public class FoodController {
         this.repository = repository;
     }
 
-    /** Recherche approximative. {@code basic=true} : ingrédients de base uniquement (pas de plats). */
+    /** Recherche approximative. */
     @GetMapping
     public List<FoodSummary> search(@RequestParam("q") String query,
-                                    @RequestParam(name = "limit", defaultValue = "20") int limit,
-                                    @RequestParam(name = "basic", defaultValue = "false") boolean basic) {
+                                    @RequestParam(name = "limit", defaultValue = "20") int limit) {
         if (query.isBlank()) {
             return List.of();
         }
-        return repository.search(query.trim(), Math.clamp(limit, 1, 100), basic);
+        return repository.search(query.trim(), Math.clamp(limit, 1, 100));
     }
 
     /**
@@ -45,7 +44,6 @@ public class FoodController {
     @GetMapping("/catalog")
     public PageResponse<FoodCatalogItem> catalog(@RequestParam(name = "q", required = false) String query,
                                                  @RequestParam(name = "group", required = false) String group,
-                                                 @RequestParam(name = "basic", defaultValue = "false") boolean basic,
                                                  @RequestParam(name = "sort", defaultValue = "name") String sort,
                                                  @RequestParam(name = "direction", defaultValue = "asc") String direction,
                                                  @RequestParam(name = "page", defaultValue = "0") int page,
@@ -53,13 +51,13 @@ public class FoodController {
         if (group != null && !group.isBlank() && !group.matches("\\d{2}|\\d{4}")) {
             throw new IllegalArgumentException("Code de catégorie invalide : " + group);
         }
-        return repository.catalog(query, group, basic, parseSort(sort), "desc".equalsIgnoreCase(direction),
+        return repository.catalog(query, group, parseSort(sort), "desc".equalsIgnoreCase(direction),
             Math.max(page, 0), Math.clamp(size, 1, 200));
     }
 
     @GetMapping("/categories")
-    public List<FoodCategory> categories(@RequestParam(name = "basic", defaultValue = "false") boolean basic) {
-        return repository.categories(basic);
+    public List<FoodCategory> categories() {
+        return repository.categories();
     }
 
     @GetMapping("/{id}")

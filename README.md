@@ -53,7 +53,10 @@ Rien à faire : la base est remplie automatiquement au premier lancement.
    dans `data/ciqual.xlsx` (ignoré par Git). Supprimez ce fichier pour forcer un nouveau
    téléchargement ; `CIQUAL_URL` permet de changer de source.
 2. Au démarrage, le backend importe `data/ciqual.xlsx` si la table des aliments est vide
-   (3 484 aliments, quelques secondes). Autre fichier : variable `CIQUAL_IMPORT_PATH`.
+   (quelques secondes). Autre fichier : variable `CIQUAL_IMPORT_PATH`. Seuls les ingrédients
+   de base utiles pour cuisiner sont gardés, sous leur version crue (« Tomate », « Farine de blé
+   T55 », « Beurre ») : plats composés, desserts, boissons, sauces industrielles et produits cuits
+   sont ignorés (règles dans `BasicIngredients`).
 3. Il ajoute ensuite les **recettes de base** de `backend/src/main/resources/seed/recipes.json`
    (une vingtaine de plats courants avec étapes), en recettes publiques visibles de tous
    (onglet *Partagées*) et donc proposées dans les *Suggestions*. Chaque ingrédient y est
@@ -132,9 +135,9 @@ meal-planner/
 | GET     | `/api/recipes/public`          | Recettes partagées                            |
 | GET     | `/api/recipes/{id}`            | Détail + valeurs nutritionnelles              |
 | POST/PUT/DELETE | `/api/recipes[/{id}]`  | Création, modification, suppression           |
-| GET     | `/api/foods?q=`                | Recherche d'aliments Ciqual (`basic` : ingrédients crus de base) |
-| GET     | `/api/foods/catalog`           | Catalogue paginé (`q`, `group`, `basic`, `sort`, `direction`) |
-| GET     | `/api/foods/categories`        | Groupes et sous-groupes Ciqual (`basic`)      |
+| GET     | `/api/foods?q=`                | Recherche d'aliments Ciqual                   |
+| GET     | `/api/foods/catalog`           | Catalogue paginé (`q`, `group`, `sort`, `direction`) |
+| GET     | `/api/foods/categories`        | Groupes et sous-groupes Ciqual                |
 | GET     | `/api/foods/{id}`              | Composition détaillée d'un aliment            |
 | POST    | `/api/imports/recipes`         | Import d'un fichier (multipart `file`)        |
 | GET     | `/api/imports[/{id}]`          | Suivi des imports                             |

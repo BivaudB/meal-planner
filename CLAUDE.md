@@ -68,6 +68,8 @@ convertis en `ROLE_USER` / `ROLE_ADMIN` côté Spring. Comptes de démo : demo/d
 
 - **Ciqual** (Anses) : référentiel d'aliments, PAS de recettes. Tables `food`, `food_group`,
   `nutrient`, `food_nutrient`. Valeurs pour 100 g ; `"< x"` et `"traces"` → `qualifier`.
+  L'import ne garde que les ingrédients de base, crus (`BasicIngredients`) : pas de plats composés,
+  desserts, boissons ni produits cuits.
 - **Import de recettes** : format deux lignes par recette (voir README). Chaque ingrédient
   est rattaché à un `food` par similarité (seuil `app.import.match-threshold`).
 - **Unités normalisées** : g, kg, mg, ml, cl, dl, l, cas, cac, pincee, piece, gousse,

@@ -50,6 +50,7 @@ class BasicIngredientsTest {
         assertThat(BasicIngredients.isBasicIngredient("0406", "Saumon, à cuire")).isTrue();
         assertThat(BasicIngredients.isBasicIngredient("041001", "Oeuf, au plat, sans matière grasse")).isFalse();
         assertThat(BasicIngredients.isBasicIngredient("041001", "Oeuf dur")).isFalse();
+        assertThat(BasicIngredients.isBasicIngredient("041001", "Œuf dur")).isFalse();
         assertThat(BasicIngredients.isBasicIngredient("0401", "Boeuf, onglet grillé/poêlé")).isFalse();
         assertThat(BasicIngredients.isBasicIngredient("0201", "Carotte, bouillie/cuite à l'eau, croquante")).isFalse();
         assertThat(BasicIngredients.isBasicIngredient("040304", "Merguez, boeuf et mouton, cuite")).isFalse();
@@ -87,6 +88,6 @@ class BasicIngredientsTest {
     void groupPrefixesOnlyMatchFromTheStart() {
         // "01" (plats composés) ne doit pas exclure "0201" (légumes) ni "1001" (déjà exclu pour lui-même)
         assertThat(BasicIngredients.isBasicIngredient("020110", "Carotte, crue")).isTrue();
-        assertThat(BasicIngredients.SQL_PREDICATE).contains("'^(01|");
+        assertThat(BasicIngredients.isBasicIngredient("010201", "Soupe de légumes")).isFalse();
     }
 }

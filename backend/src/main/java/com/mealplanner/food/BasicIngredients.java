@@ -8,7 +8,8 @@ import java.util.regex.Pattern;
 /**
  * Définit les « ingrédients de base » : les aliments Ciqual que l'on achète pour cuisiner
  * (oeufs, tomates, farine, beurre…), par opposition aux plats et produits prêts à consommer
- * (soupes, pizzas, gâteaux, sodas, sauces industrielles, terrines…).
+ * (soupes, pizzas, gâteaux, sodas, sauces industrielles, terrines…). Seuls ces ingrédients sont
+ * chargés en base par l'import Ciqual (la migration V4 a appliqué le même filtre aux bases existantes).
  * <p>
  * Le tri se fait d'abord par groupe Ciqual : les codes sont hiérarchiques (01, 0101, 010101),
  * un préfixe exclut donc tout ce qui se trouve en dessous. Certains sous-groupes mélangent
@@ -45,7 +46,6 @@ public final class BasicIngredients {
 
     /**
      * Libellés de préparations, testés sur le nom normalisé (minuscules, sans accents).
-     * Syntaxe commune aux expressions régulières Java et PostgreSQL.
      */
     public static final List<String> EXCLUDED_NAME_PATTERNS = List.of(
         "^(accra|beignet|nuggets|croquette|tarama|terrine|rillettes|omelette)( |,|$)",
@@ -72,24 +72,13 @@ public final class BasicIngredients {
         + ")([ ,)/]|$)";
 
     /** Produits dont la cuisson fait partie de l'identité (« Jambon cuit ») : jamais filtrés. */
-    static final String COOKED_PRODUCT_PATTERN = "^jambon";
+    private static final String COOKED_PRODUCT_PATTERN = "^jambon";
 
     /**
      * Mention « cru » (« Tomate ronde, crue », « Boeuf, côte crue ») ; « Jambon cru » et
      * « au lait cru » désignent un produit et sont conservés. À appliquer sans tenir compte de la casse.
      */
-    static final String RAW_MENTION_PATTERN = "(?<!lait|jambon)(\\s*,\\s*|\\s+)crue?s?(\\s+(?=,))?(?=[\\s,(]|$)";
-
-    /** Condition SQL sur l'alias {@code f} de la table food. */
-    static final String SQL_PREDICATE = "f.group_code IS NOT NULL"
-        + " AND f.group_code !~ '^(" + String.join("|", EXCLUDED_GROUP_PREFIXES) + ")'"
-        + " AND f_normalize(f.name) !~ '" + String.join("|", EXCLUDED_NAME_PATTERNS) + "'"
-        + " AND NOT (f.group_code ~ '^(" + String.join("|", RAW_ONLY_GROUP_PREFIXES) + ")'"
-        + " AND f_normalize(f.name) ~ '" + COOKED_PATTERN + "'"
-        + " AND f_normalize(f.name) !~ '" + COOKED_PRODUCT_PATTERN + "')";
-
-    /** Nom affiché d'un ingrédient de base (expression SQL sur l'alias {@code f}). */
-    static final String SQL_DISPLAY_NAME = "regexp_replace(f.name, '" + RAW_MENTION_PATTERN + "', '', 'gi')";
+    private static final String RAW_MENTION_PATTERN = "(?<!lait|jambon)(\\s*,\\s*|\\s+)crue?s?(\\s+(?=,))?(?=[\\s,(]|$)";
 
     private static final Pattern NAME_PATTERN = Pattern.compile(String.join("|", EXCLUDED_NAME_PATTERNS));
     private static final Pattern COOKED = Pattern.compile(COOKED_PATTERN);
@@ -100,13 +89,13 @@ public final class BasicIngredients {
     private BasicIngredients() {
     }
 
-    /** Équivalent Java de {@link #SQL_PREDICATE}. */
+    /** Vrai si l'aliment est un ingrédient de base, à garder lors de l'import Ciqual. */
     public static boolean isBasicIngredient(String groupCode, String name) {
         if (groupCode == null || EXCLUDED_GROUP_PREFIXES.stream().anyMatch(groupCode::startsWith)) {
             return false;
         }
         String normalized = DIACRITICS.matcher(Normalizer.normalize(name, Normalizer.Form.NFD)).replaceAll("")
-            .toLowerCase(Locale.ROOT);
+            .toLowerCase(Locale.ROOT).replace("œ", "oe").replace("æ", "ae");
         if (NAME_PATTERN.matcher(normalized).find()) {
             return false;
         }
@@ -114,7 +103,7 @@ public final class BasicIngredients {
         return !(rawOnly && COOKED.matcher(normalized).find() && !COOKED_PRODUCT.matcher(normalized).find());
     }
 
-    /** Équivalent Java de {@link #SQL_DISPLAY_NAME} : « Tomate ronde, crue » → « Tomate ronde ». */
+    /** Nom enregistré d'un ingrédient de base : « Tomate ronde, crue » → « Tomate ronde ». */
     public static String displayName(String name) {
         return RAW_MENTION.matcher(name).replaceAll("");
     }

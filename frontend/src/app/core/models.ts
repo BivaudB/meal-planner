@@ -150,7 +150,6 @@ export interface FoodCatalogQuery {
   q?: string;
   /** Code de groupe (2 chiffres) ou de sous-groupe (4 chiffres). */
   group?: string;
-  basic: boolean;
   sort: CatalogSort;
   direction: 'asc' | 'desc';
   page: number;

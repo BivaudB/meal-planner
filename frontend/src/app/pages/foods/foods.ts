@@ -1,5 +1,5 @@
 import { DecimalPipe } from '@angular/common';
-import { Component, DestroyRef, LOCALE_ID, booleanAttribute, computed, effect, inject, input, signal } from '@angular/core';
+import { Component, DestroyRef, LOCALE_ID, computed, effect, inject, input, signal } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { Router, RouterLink } from '@angular/router';
 import { Subject, debounceTime } from 'rxjs';
@@ -61,10 +61,6 @@ const SORTS: { key: CatalogSort; label: string; unit: string }[] = [
             <option [value]="s.code" [selected]="s.code === subcategoryCode()">{{ capitalize(s.name) }} ({{ s.foodCount }})</option>
           }
         </select>
-        <label class="toggle">
-          <input type="checkbox" [checked]="!tout()" (change)="toggleBasic($any($event.target).checked)" />
-          Ingrédients de base uniquement
-        </label>
       </div>
 
       @if (error()) {
@@ -138,7 +134,7 @@ const SORTS: { key: CatalogSort; label: string; unit: string }[] = [
   styles: `
     .filters {
       display: grid;
-      grid-template-columns: 2fr 1.5fr 1.5fr auto;
+      grid-template-columns: 2fr 1.5fr 1.5fr;
       gap: 10px;
       align-items: center;
       margin-bottom: 12px;
@@ -147,13 +143,6 @@ const SORTS: { key: CatalogSort; label: string; unit: string }[] = [
       .filters {
         grid-template-columns: 1fr;
       }
-    }
-    .toggle {
-      flex-direction: row;
-      align-items: center;
-      gap: 8px;
-      font-weight: 400;
-      white-space: nowrap;
     }
     .count {
       margin: 0 0 8px;
@@ -231,8 +220,6 @@ export class FoodsPage {
   readonly tri = input<string>();
   readonly ordre = input<string>();
   readonly pageNumber = input<string>(undefined, { alias: 'page' });
-  /** Inclut aussi les plats et produits préparés. */
-  readonly tout = input(false, { transform: booleanAttribute });
 
   protected readonly sorts = SORTS;
   protected readonly categories = signal<FoodCategory[]>([]);
@@ -260,18 +247,15 @@ export class FoodsPage {
   );
 
   constructor() {
-    effect(() => {
-      this.api.foodCategories(!this.tout()).subscribe({
-        next: (categories) => this.categories.set(categories),
-        error: (e) => this.error.set(errorMessage(e)),
-      });
+    this.api.foodCategories().subscribe({
+      next: (categories) => this.categories.set(categories),
+      error: (e) => this.error.set(errorMessage(e)),
     });
 
     effect(() => {
       const query = {
         q: this.q(),
         group: this.categorie(),
-        basic: !this.tout(),
         sort: this.sort(),
         direction: this.direction() as 'asc' | 'desc',
         page: Math.max(Number(this.pageNumber() ?? 1) - 1, 0) || 0,
@@ -298,10 +282,6 @@ export class FoodsPage {
     if ('page' in params) {
       window.scrollTo({ top: 0 });
     }
-  }
-
-  protected toggleBasic(basicOnly: boolean): void {
-    this.update({ tout: basicOnly ? null : true, categorie: null });
   }
 
   protected sortBy(key: CatalogSort): void {
